@@ -1,7 +1,7 @@
 #!/bin/sh
 
 apt update
-apt install -y 
+apt install -y git
 
 git clone -b monolith https://github.com/express42/reddit.git
 if [ $? -ne 0 ]
