@@ -1,5 +1,8 @@
 #!/bin/sh
 
+apt update
+apt install -y 
+
 git clone -b monolith https://github.com/express42/reddit.git
 if [ $? -ne 0 ]
 then
