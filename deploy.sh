@@ -20,8 +20,7 @@ fi
 
 echo "Starting application"
 
-DIRECTORY=`pwd`
-su - appuser -c "puma -d"
+puma -d
 ps aux |grep -v grep | grep -q puma
 
 if [ $? -eq 0 ]
