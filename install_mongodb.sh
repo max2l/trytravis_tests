@@ -14,15 +14,14 @@ else
   exit 1
 fi
 
-sudo systemctl start mongod
+systemctl enable mongod
+systemctl start mongod
 
 if [ $? -ne 0 ]
 then
   echo "CRITICAL: MongoDB is not started!"
   exit 1  
 fi
-
-sudo systemctl enable mongod
 
 echo "OK: MongoDB is installed and is started"
 exit 0
