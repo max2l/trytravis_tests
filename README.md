@@ -37,6 +37,6 @@ alias someinternalhost='ssh -A -i ~/.ssh/appuser -tt  appuser@35.195.18.128 ssh 
 ```
 bastion_IP = 35.195.18.128
 someinternalhost_IP = 10.132.0.3
-testapp_IP = 104.199.97.7
+testapp_IP = 130.211.68.73
 testapp_PORT = 9292 
 ```
