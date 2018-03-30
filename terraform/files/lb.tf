@@ -61,4 +61,3 @@ resource "google_compute_global_forwarding_rule" "default" {
   target     = "${google_compute_target_http_proxy.lb-http-proxy.self_link}"
   port_range = "80"
 }
-
