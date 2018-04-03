@@ -1,6 +1,5 @@
 terraform {
   backend "gcs" {
-    bucket  = "max2l-bucket-state"
+    bucket = "max2l-bucket-state"
   }
 }
-

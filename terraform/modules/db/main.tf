@@ -20,7 +20,30 @@ resource "google_compute_instance" "db" {
   }
 }
 
-resource "google_compute_firewall" "firewall_mongo" {
+resource "null_resource" "db" {
+  count = "${var.deploy_mongodb ? 1 : 0}"
+
+  triggers = {
+    cluster_instance_ids = "${join(",", google_compute_instance.db.*.id)}"
+  }
+
+#  connection {
+#    host = "${element(google_compute_instance.db.*.network_interface.0.access_config.0.assigned_nat_ip, 0)}"
+#  }
+
+  connection {
+    host = "${element(google_compute_instance.db.*.network_interface.0.access_config.0.assigned_nat_ip, 0)}"
+    type        = "ssh"
+    user        = "appuser"
+    private_key = "${file(var.private_key_path)}"
+  }
+
+  provisioner "remote-exec" {
+    script = "${path.module}/files/install_mongodb.sh"
+  }
+}
+
+resource "google_compute_firewall" "firewall_mongod" {
   name    = "allow-mongo-default"
   network = "default"
 
@@ -29,6 +52,6 @@ resource "google_compute_firewall" "firewall_mongo" {
     ports    = ["27017"]
   }
 
-  target_tags = ["reddit-db"]
+  target_tags = ["reddit-db"]                 
   source_tags = ["reddit-app"]
 }

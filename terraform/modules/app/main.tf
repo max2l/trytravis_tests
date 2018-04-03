@@ -1,3 +1,11 @@
+data "template_file" "init" {
+  template = "${file("${path.module}/files/puma.service.tpl")}"
+
+  vars {
+    mongodb_address = "${var.mongodb_external_ip}"
+  }
+}
+
 resource "google_compute_instance" "app" {
   name         = "reddit-app"
   machine_type = "g1-small"
@@ -20,6 +28,35 @@ resource "google_compute_instance" "app" {
 
   metadata {
     ssh-keys = "appuser:${file(var.public_key_path)}"
+  }
+
+}
+
+resource "null_resource" "app" {
+  count = "${var.deploy_puma ? 1 : 0}"
+
+  triggers = {
+    cluster_instance_ids = "${join(",", google_compute_instance.app.*.id)}"
+  }
+
+#  connection {
+#    host = "${element(google_compute_instance.app.*.network_interface.0.access_config.0.assigned_nat_ip, 0)}"
+#  }
+
+  connection {
+    host = "${element(google_compute_instance.app.*.network_interface.0.access_config.0.assigned_nat_ip, 0)}"
+    type        = "ssh"
+    user        = "appuser"
+    private_key = "${file(var.private_key_path)}"
+  }
+
+  provisioner "file" {
+    content      = "${data.template_file.init.rendered}"
+    destination = "/tmp/puma.service"
+  }
+
+  provisioner "remote-exec" {
+    script = "${path.module}/files/deploy.sh"
   }
 }
 
