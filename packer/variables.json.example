@@ -1,0 +1,10 @@
+{
+  "proj_id": "valued-clarity-198010",
+  "source_image_family": "ubuntu-1604-lts",
+  "machine_type": "f1-micro",
+  "disk_type": "pd-standard",
+  "disk_size": "10",
+  "network": "default",
+  "tags": "redit-server"
+}
+
