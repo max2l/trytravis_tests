@@ -106,4 +106,3 @@ testapp_port = 9292
 ```
 app_external_ip - IP адреса микросервисов
 gcp_lb_external_ip - IP адрес балансировщика GCP
-```
