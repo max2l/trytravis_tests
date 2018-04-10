@@ -39,10 +39,6 @@ resource "null_resource" "app" {
     cluster_instance_ids = "${join(",", google_compute_instance.app.*.id)}"
   }
 
-#  connection {
-#    host = "${element(google_compute_instance.app.*.network_interface.0.access_config.0.assigned_nat_ip, 0)}"
-#  }
-
   connection {
     host = "${element(google_compute_instance.app.*.network_interface.0.access_config.0.assigned_nat_ip, 0)}"
     type        = "ssh"
@@ -77,3 +73,4 @@ resource "google_compute_firewall" "firewall_puma" {
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["reddit-app"]
 }
+

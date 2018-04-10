@@ -10,7 +10,7 @@ module "db" {
   private_key_path = "${var.private_key_path}"
   zone             = "${var.zone}"
   db_disk_image    = "${var.db_disk_image}"
-  deploy_mongodb   = "true"
+  deploy_mongodb   = "false"
 }
 
 module "app" {
@@ -19,7 +19,7 @@ module "app" {
   private_key_path    = "${var.private_key_path}"
   zone                = "${var.zone}"
   app_disk_image      = "${var.app_disk_image}"
-  deploy_puma         = "true"
+  deploy_puma         = "false"
   mongodb_external_ip = "${module.db.db_external_ip}"
 }
 
