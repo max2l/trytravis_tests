@@ -1,5 +1,5 @@
 - name: Configule application
-  become: true  
+  become: true
   hosts: reddit-app
   debugger: on_failed
   tasks:
