@@ -1,6 +1,6 @@
 ---
 - name: Configule hosts for mongo db access
-  hosts: db
+  hosts: reddit-db
   tags: db-tag
   become: true
   vars:
@@ -11,7 +11,7 @@
       template:
         src: templates/mongod.conf.j2
         dest: /etc/mongod.conf
-      mode: 0644
+        mode: 0644
       notify: restart mongod
 
   handlers:
@@ -20,7 +20,7 @@
       service: name=mongod state=restarted
 
 - name: Configule application
-  hosts: app
+  hosts: reddit-app
   tags: app-tag
   vars:
     db_host: 35.189.228.208
@@ -47,7 +47,7 @@
     systemd: name=puma state=restarted
 
 - name: Deploy application Puma
-  hosts: app
+  hosts: reddit-app
   tags: deploy-tag
   tasks:
     - name: Fetch the latest version of application code
