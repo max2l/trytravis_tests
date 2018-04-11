@@ -1,7 +1,6 @@
 - name: Configule application
   become: true
   hosts: reddit-app
-  debugger: on_failed
   tasks:
     - name: Add unit file for Puma
       copy:
