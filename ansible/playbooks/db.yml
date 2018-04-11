@@ -1,6 +1,6 @@
 ---
 - name: Configule hosts for mongo db access
-  hosts: reddit-db
+  hosts: db
   become: true
   roles:
     - db

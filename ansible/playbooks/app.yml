@@ -1,6 +1,6 @@
 - name: Configule application
   become: true
-  hosts: reddit-app
+  hosts: app
   roles:
     - app
 
