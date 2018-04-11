@@ -1,9 +1,6 @@
 - name: Configule application
   become: true
   hosts: reddit-app
-
-  vars:
-    db_host: 10.132.0.2
   roles:
     - app
 
