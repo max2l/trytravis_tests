@@ -127,4 +127,43 @@ ansible-playbook clone.yml
  - Изучено использование модукей и плейбуков Ansible.
  - Создан скрипт `forDinamicInventory.sh` для работы с динамическими inventory.
  - Настройка работа Ansible с динамическими inventory. 
- 
+
+## Homework 10. Расширенные возможности Ansible
+### Описание конфигурации
+ - В плейбуке `ansible/reddit_app_one_play.yml` описан сценарий установки и настойки для MongoDB и Puma
+ - В плейбуке `ansible/reddit_app_multiple_plays.yml` производится установка MongoDB и Puma через несколько сценариев установки.
+ - В плейбуке `site.yml`  импортируются файлы  `ansible/app.yml`, `ansible/clone.yml`, `ansible/deploy.yml` и `ansible/db.yml` для установки ПО.
+ - Скрипт `gce.py` необходим для использования динамических inventory. Информация о хостах и переменных берется из GCP.
+ -  Плейбуки  `ansible/packer_app.yml` и `ansible/packer_db.yml` необходимы для сборки образов с помощью Packer для  GCP
+ -  Шаблоны  `ansible/templates/db_config.j2` и `ansible/templates/mongod.conf.j2` необходимы для создания  фаилов `/etc/mongod.conf
+` и  `/home/appuser/db_config`.
+ -  Файл `ansible/files/puma.service` необходим для запуска ПО Puma используя системный менеджер systemd
+### Подключение
+ - Для установки и настройки ПО с использованием плейбкука `ansible/reddit_app_one_play.yml` используются теги `app-tag` `deploy-tag`. При использовании этого плейбука необходимо задавать группу хостов
+```
+reddit_app.yml --limit db
+ansible-playbook reddit_app.yml --limit app --tags app-tag
+ansible-playbook reddit_app.yml --check --limit app --tags deploy-tag
+```
+ - Для использования прейбука `ansible/reddit_app_multiple_plays.yml` так же необходимо использовать теги, но группу хостов уже использовать не нужно.
+```
+ansible-playbook reddit_app2.yml --tags db-tag
+ansible-playbook reddit_app2.yml --tags app-tag --check
+ansible-playbook reddit_app2.yml --tags deploy-tag --check
+```
+ - Для плейбука `site.yml` ненужно задавать ни тегов, ни группы хостов. 
+```
+ansible-playbook site.yml
+```
+ - Сборка образов для GCP производится командами.
+```
+packer build -var-file=packer/variables.json packer/app.json
+packer build -var-file=packer/variables.json packer/db.json
+```
+ - 
+### В процессе сделано:
+ - Созданы плейбуки для установки и настройки Puma и  MongoDB c использованием различных методик (Прлеибук -> один сценайий устиновки, плейбук -> несколько сценариев установки, прейбук -> импорт других плейбуков.).
+ - Созданы плейбуки для сборки GCP образов ОС c использованием Packer. 
+ - Пересозданы образы ОС `reddit-app-base` и `reddit-db-base`
+ - Настроено использование динамических инвентори с использованием файла `gce.py`.
+
