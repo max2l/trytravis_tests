@@ -27,10 +27,6 @@ resource "null_resource" "db" {
     cluster_instance_ids = "${join(",", google_compute_instance.db.*.id)}"
   }
 
-#  connection {
-#    host = "${element(google_compute_instance.db.*.network_interface.0.access_config.0.assigned_nat_ip, 0)}"
-#  }
-
   connection {
     host = "${element(google_compute_instance.db.*.network_interface.0.access_config.0.assigned_nat_ip, 0)}"
     type        = "ssh"
@@ -55,3 +51,4 @@ resource "google_compute_firewall" "firewall_mongod" {
   target_tags = ["reddit-db"]                 
   source_tags = ["reddit-app"]
 }
+
