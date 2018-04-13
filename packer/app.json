@@ -26,10 +26,11 @@
       "ssh_username": "appuser"
     }
   ],
-"provisioners": [
-{
-"type": "ansible",
-"playbook_file": "ansible/playbooks/packer_app.yml"
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "ansible/playbooks/packer_app.yml"
+    }
+  ]
 }
-]
-}
+
