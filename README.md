@@ -166,4 +166,29 @@ packer build -var-file=packer/variables.json packer/db.json
  - Созданы плейбуки для сборки GCP образов ОС c использованием Packer. 
  - Пересозданы образы ОС `reddit-app-base` и `reddit-db-base`
  - Настроено использование динамических инвентори с использованием файла `gce.py`.
-
+## Homework 11. Ansible роли, окружения и best practices
+### Описание конфигурации
+ - В каталогах `ansible/roles/db` и `ansible/roles/app` расположены роли для установки и настройки MongoDB и Puma
+ - В каталогах `ansible/environments/prod` и `ansible/environments/stage` находятся файлы для работы  с Prod и Stage окружениями.
+ - В файлах `ansible/environments/prod/group_vars/tag_reddit-app`, `ansible/environments/prod/group_vars/tag_reddit-db`, `ansible/environments/stage/group_vars/tag_reddit-app`, `ansible/environments/stage/group_vars/tag_reddit-db` описываются переменные для раблоты с динамическими инвентори.
+ - В каталоге `ansible/playbooks` расположены плейбуки для вызова ролей.
+ - В файле `.travis.yml` определены команды для тестирования синтаксиса файлов и корректности настройки проекта.
+ - Файл `ansible/vault.key` предназначен для шифрования с помощью Ansible Vault.
+### Подключение
+ - Для создания виртуальных машин необходимо выполнить команды
+```
+terraform destroy
+terraform apply -auto-approve=false
+```
+ - Для создания новых ролей необходимо выполнить комманды `ansible-galaxy init app` и `ansible-galaxy init db`
+ - По умолчанию плейбуки работают со Stage окружением. Для работы с Prod окруженем необходимо явно указать инвентори файл для Prod окружения.
+```
+$ ansible-playbook -i environments/prod/inventory playbooks/site.yml 
+```
+ - Фаилы содержашие конфендициальную информацию зашиврованны с помошью Ansible Vault
+```
+ansible-vault encrypt environments/prod/credentials.yml
+ansible-vault encrypt environments/stage/credentials.yml
+```
+ - Запустить тесты без создания PR и отправки изменений в GitHub можно командой `trytravis`
+### В процессе сделано:
