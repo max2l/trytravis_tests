@@ -13,8 +13,8 @@ before_install:
   unzip terraform_0.11.7_linux_amd64.zip &&
   sudo mv terraform /usr/local/bin &&
   wget https://github.com/wata727/tflint/releases/download/v0.5.4/tflint_linux_amd64.zip &&
-  unzip tflint_linux_amd64.zip && sudo mv
-  tflint /usr/local/bin/ &&
+  unzip tflint_linux_amd64.zip &&
+  sudo mv tflint /usr/local/bin/ &&
   cd -
 - cd terraform/prod &&
   cp -v terraform.tfvars.example terraform.tfvars &&
