@@ -180,15 +180,21 @@ packer build -var-file=packer/variables.json packer/db.json
 terraform destroy
 terraform apply -auto-approve=false
 ```
- - Для создания новых ролей необходимо выполнить комманды `ansible-galaxy init app` и `ansible-galaxy init db`
- - По умолчанию плейбуки работают со Stage окружением. Для работы с Prod окруженем необходимо явно указать инвентори файл для Prod окружения.
+ - Для создания новых ролей необходимо выполнить команды `ansible-galaxy init app` и `ansible-galaxy init db`
+ - По умолчанию плейбуки работают со Stage окружением. Для работы с Prod окружением необходимо явно указать инвентори файл для Prod окружения.
 ```
 $ ansible-playbook -i environments/prod/inventory playbooks/site.yml 
 ```
- - Фаилы содержашие конфендициальную информацию зашиврованны с помошью Ansible Vault
+ - Файлы содержащие конфиденциальную информацию зашифрованы с помощью Ansible Vault
 ```
 ansible-vault encrypt environments/prod/credentials.yml
 ansible-vault encrypt environments/stage/credentials.yml
 ```
  - Запустить тесты без создания PR и отправки изменений в GitHub можно командой `trytravis`
 ### В процессе сделано:
+ - Ранее созданные плейбуки перенесены в отдельно созданные роли.
+ - Созданы и описаны два окружения `Prod` и `Stage`. Проект настроен для работы с этими окружениями.
+ - Установлена и настроена коммьюнити роль  Nginx.
+ - Конфиденциальные данные зашифрованы с помощью Ansible Vault
+ - Проект настроен для работы с динамическими инвентори
+ - Настроено использование `Travis-ci` для запуска авто тестов без создания PR и без push изменений в `GitLab`.
