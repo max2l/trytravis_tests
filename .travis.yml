@@ -30,7 +30,9 @@ before_install:
   cd -
 - find packer/*.json -type f -print0 |
   xargs -0 -n1 packer validate -var-file packer/variables.json.example
-- ansible-lint ansible/playbooks/*.yml
+- cd ansible/playbooks && 
+  ansible-lint *.yml &&
+  cd -
 
 notifications:
   slack:
