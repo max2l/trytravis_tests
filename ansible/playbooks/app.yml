@@ -1,0 +1,12 @@
+- name: Configule application
+  vars:
+    db_host: 10.132.0.2
+
+  become: true
+  hosts:
+    - tag_reddit-app
+    - app
+  roles:
+    - app
+    - jdauphant.nginx
+
