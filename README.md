@@ -198,3 +198,5 @@ ansible-vault encrypt environments/stage/credentials.yml
  - Конфиденциальные данные зашифрованы с помощью Ansible Vault
  - Проект настроен для работы с динамическими инвентори
  - Настроено использование `Travis-ci` для запуска авто тестов без создания PR и без push изменений в `GitLab`.
+
+[![Build Status](https://travis-ci.org/Otus-DevOps-2018-02/max2l_infra.svg?branch=ansible-4)](https://travis-ci.org/Otus-DevOps-2018-02/max2l_infra)

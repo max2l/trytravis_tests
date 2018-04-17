@@ -2,25 +2,6 @@
 - name: MongoDB
   hosts: all
   become: true
-  tasks:
-  - name: Add mongo apt repo key
-    apt_key:
-      keyserver: keyserver.ubuntu.com
-      id: EA312927
-
-  - name: Add apt repo
-    apt_repository:
-      repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
-      state: present
-
-  - name: Install mongod
-    apt:
-      name: mongodb-org
-      state: present
-
-  - name: Enable mongod service
-    systemd:
-      name: mongod
-      state: started
-      enabled: True
+  roles:
+    - db
 
