@@ -198,5 +198,46 @@ ansible-vault encrypt environments/stage/credentials.yml
  - Конфиденциальные данные зашифрованы с помощью Ansible Vault
  - Проект настроен для работы с динамическими инвентори
  - Настроено использование `Travis-ci` для запуска авто тестов без создания PR и без push изменений в `GitLab`.
+## Homework 12. Локальная разработка и тестирование Ansible ролей и плейбуков
+### Описание конфигурации
+- В файле `ansible/Vagrantfile` описана конфигурация для работы `Vagrant` 
+- В файле `ansible/roles/db/tasks/config_mongo.yml` описана настройка конфигурации для `MongoDB`
+- В файле `ansible/roles/app/tasks/ruby.yml` описана установка `Ruby`
+- Инвентори сформированные `Vagrant` хранятся в файле `.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory`
+- В файле `ansible/Vagrantfile` можно определить имя пользователя из под которого будет работать приложение `Puma`
+### Подключение
+- Проверить скачивание образа виртуальной машины `box` и статуса виртуальных машин можно командами
+```
+vagrant box list
+vagrant status
+```
+- Соединиться с запущенными виртуальными машинами можно командами 
+```
+vagrant ssh appserver
+vagrant ssh dbserver
+```
+- Применить роли на запушенных VM можно командами 
+```
+vagrant provision dbserver
+vagrant provision appserver
+```
+- Создать и удалить VM можно командами
+```
+vagrant up
+vagrant destroy -f
+```
+- 
+### В процессе сделано:
+- Установлен и настроен VirtualBox и Vagrant
+- Сознана конфигурация `Vagrant` для разворачивания двух виртуальных машин
+- Настроено взаимодействие `Vagrant` c ролями `Ansible` которые были созданы в предыдущем ДЗ
+- Доработаны роли `Ansible` для работы с `Vagrant`
+- Произведено тестирование применения ролей на запушенных VM.
+- Произведена параметризация роли app для работы ПО из под любого пользователя. 
+- Настроена конфигурация `Nginx` для работы с приложением `Puma`
+- Настроено тестирование Ansible ролей используя ПО `Molecule`
+- Роль `db` вынесена в отдельный репозиторий `https://github.com/max2l/db_role_for_mongo`
+- Настроено тестирование вынесенной роли с помощью `Molecule` в облаке `GCP`
+- Настроена отправка сообщений в канал [Slack](https://devops-team-otus.slack.com/messages/C6U5JSKSQ/) 
 
 [![Build Status](https://travis-ci.org/Otus-DevOps-2018-02/max2l_infra.svg?branch=ansible-4)](https://travis-ci.org/Otus-DevOps-2018-02/max2l_infra)
