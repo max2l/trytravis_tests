@@ -1,24 +1,24 @@
 ---
-
 - name: Destroy
   hosts: localhost
   connection: local
-  gather_facts: false
+  gather_facts: False
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
+  vars:
+    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
+    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
   tasks:
     - name: Destroy molecule instance(s)
-      molecule_vagrant:
-        instance_name: "{{ item.name }}"
-        platform_box: "{{ item.box }}"
-        provider_name: "{{ molecule_yml.driver.provider.name }}"
-        force_stop: "{{ item.force_stop | default(true) }}"
-
-        state: destroy
+      gce:
+        instance_names: "{{ item.name }}"
+        state: absent
+        zone: "{{ item.zone }}"
+        service_account_email: "{{ lookup('env', 'GCE_SERVICE_ACCOUNT_EMAIL') }}"
+        credentials_file: "{{ lookup('env', 'GCE_CREDENTIALS_FILE') }}"
+        project_id: "{{ lookup('env', 'GCE_PROJECT_ID') }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
-
-    # NOTE(retr0h): Vagrant/VBox sucks and parallelizing instance deletion
-    # causes issues.
 
     # Mandatory configuration for Molecule to function.
 

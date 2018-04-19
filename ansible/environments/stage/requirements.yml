@@ -1,3 +1,9 @@
 ---
 - src: jdauphant.nginx
   version: v2.13
+
+
+- src: https://github.com/max2l/db_role_for_mongo
+  version: master
+  name: db
+
