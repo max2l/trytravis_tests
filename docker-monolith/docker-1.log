@@ -1,0 +1,7 @@
+REPOSITORY              TAG                 IMAGE ID            CREATED              SIZE
+max2l/ubuntu-tmp-file   latest              f5e4578ba214        About a minute ago   113MB
+ubuntu                  16.04               c9d990395902        6 days ago           113MB
+hello-world             latest              e38bc07ac18e        7 days ago           1.85kB
+nginx                   latest              b175e7467d66        8 days ago           109MB
+
+Образ это структура файлов и директорий хранящаяся на диске. Он необходим для замуска контейнеров. Из одного контейнера можно запусть несколько образов. Контейнер, это как бы realonly шаблон для запуска образа. В контейнере уже можно редактировать файлы. 
