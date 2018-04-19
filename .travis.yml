@@ -5,36 +5,17 @@ before_install:
 - curl https://raw.githubusercontent.com/express42/otus-homeworks/2018-02/run.sh |
   bash
 - touch ~/.ssh/appuser.pub && touch ~/.ssh/appuser
-- sudo pip install --upgrade pip &&
-  sudo pip install ansible &&
-  sudo pip install ansible-lint
-- cd /tmp &&
-  wget https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip &&
-  unzip terraform_0.11.7_linux_amd64.zip &&
-  sudo mv terraform /usr/local/bin &&
-  wget https://github.com/wata727/tflint/releases/download/v0.5.4/tflint_linux_amd64.zip &&
-  unzip tflint_linux_amd64.zip &&
-  sudo mv tflint /usr/local/bin/ &&
-  cd -
-- cd terraform/prod &&
-  cp -v terraform.tfvars.example terraform.tfvars &&
-  terraform init -backend=false &&
-  terraform validate &&
-  tflint *.tf &&
-  cd -
-- cd terraform/stage &&
-  terraform init -backend=false &&
-  cp -v terraform.tfvars.example terraform.tfvars &&
-  terraform validate &&
-  tflint *.tf &&
-  cd -
-- find packer/*.json -type f -print0 |
-  xargs -0 -n1 packer validate -var-file packer/variables.json.example
-- cd ansible/playbooks && 
-  ansible-lint *.yml &&
-  cd -
-
+- sudo pip install --upgrade pip && sudo pip install ansible && sudo pip install ansible-lint
+- cd /tmp && wget https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip
+  && unzip terraform_0.11.7_linux_amd64.zip && sudo mv terraform /usr/local/bin &&
+  wget https://github.com/wata727/tflint/releases/download/v0.5.4/tflint_linux_amd64.zip
+  && unzip tflint_linux_amd64.zip && sudo mv tflint /usr/local/bin/ && cd -
+- cd terraform/prod && cp -v terraform.tfvars.example terraform.tfvars && terraform
+  init -backend=false && terraform validate && tflint *.tf && cd -
+- cd terraform/stage && terraform init -backend=false && cp -v terraform.tfvars.example
+  terraform.tfvars && terraform validate && tflint *.tf && cd -
+- find packer/*.json -type f -print0 | xargs -0 -n1 packer validate -var-file packer/variables.json.example
+- cd ansible/playbooks && ansible-lint *.yml && cd -
 notifications:
   slack:
-    secure: WkAP0cM/RLB4BVWaVFHIetVwDnzS4jUDdnueYoaAUTwwipgHEJ0jzcVSMUJTdJTAXdFy/RXfNSiLCIWbnOCSp7c2JGaPvu44u9Dd+IiNgCZhCzZpNZ0ZLd4XU88y6MCmsZFUSKqv1BQL+lBn3rhpPfQqh3vis7C5uOBaTJa0Bm2rX1o6vrUj2gTjwjUjbCYcEE72Pl2PzvUGBV95WnN3hX/sXrKEV7M/yAEzI3vdRY+cj3EJamOEBauRxxuNlc2kKqm5EU1Dq9gjDN/ldDOG+HQ3oKLq1VFBRjieYh3ORQvLIMuuJWwd+975ewRhUrIWP2B10pePoXTRVaiqP0L6zRwf5WwnXAofXkp030YeekXqSLLC/KYyBR3tyYfn+DcJ93+xIG8m5B/1Rt4bU7QLxeMXcW4Z+yPQ4eOQlo1vV96Ywo8ShC73UiQ+oHcNEJaelBjtDmju6x9hGVLMD5b+45SO1wEPRmdfoFeBifnGDgE5/YPSK8Cko5pbWybsuOx1pc8TQlbN1K4G/4ywhizaROWQiiHFZlF7cQS+o5+iz4FBk4Fy6jjr4QMLekB8+YpGXLj9PgZc2hCr2EpfL3cmRTtX/CBS4zZqzIbqxBKhGhF1CHl4rehy1a+9o/fXwdhI0KxB34JTvz35aBL9VxL18nwDo+a0X9aDbsK8Jz/IRzU=
-
+    secure: mzywBgcZ8F3Cb/sJ+IOCKbvFX+ViY5pG72fkFCNCKi5Fmhhlvpr4J1RpIdzI86kAneYMLzCmDrBBm+xcUfamGif608cEYoFzALBwtCBidgmijCX6oBVtlQkFBZiegocxMOGG3+NRpKqdsLs+tcY+frGfhgVL7ORaXX/yr+GVmEcP9hzUzjS8G+bgQjV0ndybEm+WCYcbCUYcKnPCYkuxA4bVjG9vSNHIf+HlS3RXCa7BQn5OIScRNuvdlXOGyCkXUURwj5W0BqkJF4jwB4+ZkVSmkV4rntnxfTY3nsiCZtqEM+Gra0S/PpLEC8Dt2dIZpH8wEpxcsXh+KjJRJjYGEdfllu80DZooVtIjff4hFb68+iTCvcyVntQ9r2GnnB+IR973MwqiBHoExlek1fGbhxMsd9Q+hsfBWENqbJPX80WHmzwGLtIUFcTiUk2tVmMzB01/vZlDDikLvht4XvGT144MCO+x4SOFwRCz7WH8rfPPE07VKHi2WoGb4De3gSJCClLRqnrw3/XI6YfON1R4fD0q7Ka+mI5c0NnpF25tF0EM7u1cdUHadUSCzHyBIDKCH1M4Ke9h+9u6TALMA9vTwcse4k0kUkuNdUAeXL78oBMSFUMVZS1TNXL4Iyae7+xyr9hf3noV5Apu2mJ+1zjJefjhUeJDPyCPZ18wVstc+Ek=
