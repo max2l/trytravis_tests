@@ -1,0 +1,12 @@
+- name: Deploy application
+  become: true
+  hosts: tag_reddit-docker
+  tasks:
+    - name: Run docker container
+      docker_container:
+        name: puma
+        image: max2l/otus-reddit:1.0
+        ports:
+          - 9292:9292
+        state: started
+        restart: yes

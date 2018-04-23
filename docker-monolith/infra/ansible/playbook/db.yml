@@ -1,0 +1,46 @@
+---
+- name: Configule hosts for mongo db access
+  hosts: tag_reddit-db
+  become: true
+  vars:
+    mongo_bind_ip: 0.0.0.0
+
+  tasks:
+      - name: Add mongo apt repo key
+        apt_key:
+          keyserver: keyserver.ubuntu.com
+          id: EA312927
+
+      - name: Add apt repo
+        apt_repository:
+          repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
+          state: present
+
+      - name: Install mongod
+        apt:
+          name: mongodb-org
+          state: present
+
+      - name: Enable mongod service
+        systemd:
+          name: mongod
+          state: started
+          enabled: True
+
+      - name: Change mongo config file
+        template:
+          src: ../templates/mongod.conf.j2
+          dest: /etc/mongod.conf
+          mode: 0644
+        notify: restart mongod
+
+      - name: Change mongo config file
+        template:
+          src: ../templates/mongod.conf.j2
+          dest: /etc/mongod.conf
+          mode: 0644
+        notify: restart mongod
+
+  handlers:
+    - name: restart mongod
+      service: name=mongod state=restarted
