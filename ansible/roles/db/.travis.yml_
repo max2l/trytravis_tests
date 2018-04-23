@@ -1,6 +1,0 @@
-language: python
-python:
-- '3.6'
-install:
-- pip install ansible==2.3.0 molecule apache-libcloud
-
