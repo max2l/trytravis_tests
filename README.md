@@ -123,6 +123,7 @@ ansible-playbook playbook/site.yml
 ### В процессе сделано:
  - Созданы Docker файлы для сборки образов микросервисов
  - Произведена сборка микросервисов на основании ранее созданых файлов
+ - Создан том `reddit_db` для хранения данных MongoDB
 
 ### Как запустить проект:
   - Создание docker machine в GCP
@@ -135,9 +136,28 @@ docker-machine create --driver google \
   docker-host 
 ```
   - Сборка образов микросервисов
- ```
- docker pull mongo:latest
- docker build -t max2l/post:1.0 ./post-py
- docker build -t max2l/comment:1.0 ./comment
- docker build -t max2l/ui:1.0 ./ui
- ```
+```
+docker pull mongo:latest
+docker build -t max2l/post:1.0 ./post-py
+docker build -t max2l/comment:1.0 ./comment
+docker build -t max2l/ui:1.0 ./ui
+```
+  - Создане сети для приложения
+```
+docker network create reddit
+```
+  - Запуск контейнеров 
+```
+docker run -d --network=reddit --network-alias=post_db --network-alias=comment_db mongo:latest
+docker run -d --network=reddit --network-alias=post max2l/post:1.0
+docker run -d --network=reddit --network-alias=comment max2l/comment:1.0
+docker run -d --network=reddit -p 9292:9292 max2l/ui:2.0
+```
+  - Создание volume
+```
+ docker volume create reddit_db
+```
+  - Запуск MongoDB  с томом `reddit_db`
+```
+docker run -d --network=reddit --network-alias=post_db --network-alias=comment_db -v reddit_db:/data/db mongo:latest
+```
