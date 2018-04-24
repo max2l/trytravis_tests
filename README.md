@@ -119,3 +119,25 @@ terraform apply
 cd docker-monolith/infra/ansible
 ansible-playbook playbook/site.yml
 ```
+## Homework 15. Docker-образа. Микросервисы.pdf
+### В процессе сделано:
+ - Созданы Docker файлы для сборки образов микросервисов
+ - Произведена сборка микросервисов на основании ранее созданых файлов
+
+### Как запустить проект:
+  - Создание docker machine в GCP
+```
+export GOOGLE_PROJECT=docker-201806
+docker-machine create --driver google \
+  --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+  --google-machine-type n1-standard-1 \
+  --google-zone europe-west1-b \
+  docker-host 
+```
+  - Сборка образов микросервисов
+ ```
+ docker pull mongo:latest
+ docker build -t max2l/post:1.0 ./post-py
+ docker build -t max2l/comment:1.0 ./comment
+ docker build -t max2l/ui:1.0 ./ui
+ ```
