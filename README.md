@@ -122,8 +122,10 @@ ansible-playbook playbook/site.yml
 ## Homework 15. Docker-образа. Микросервисы.pdf
 ### В процессе сделано:
  - Созданы Docker файлы для сборки образов микросервисов
- - Произведена сборка микросервисов на основании ранее созданых файлов
+ - Произведена сборка микросервисов на основании ранее созданных файлов
  - Создан том `reddit_db` для хранения данных MongoDB
+ - Контейнеры docker запушены с ранее созданным томом.
+ - Изменены сетевые алиасы для запуска контейнеров и определены переменные окружения для запуска этих контейнеров.
 
 ### Как запустить проект:
   - Создание docker machine в GCP
@@ -139,7 +141,7 @@ docker-machine create --driver google \
 ```
 docker pull mongo:latest
 docker build -t max2l/post:1.0 ./post-py
-docker build -t max2l/comment:1.0 ./comment
+docker build -t max2l/comment:1.0 ./commentß
 docker build -t max2l/ui:1.0 ./ui
 ```
   - Создане сети для приложения
@@ -161,3 +163,12 @@ docker run -d --network=reddit -p 9292:9292 max2l/ui:2.0
 ```
 docker run -d --network=reddit --network-alias=post_db --network-alias=comment_db -v reddit_db:/data/db mongo:latest
 ```
+  - Запуск контейнеров c другими сетевым алиасами
+```
+docker run -d --network=reddit --network-alias=post_db_new_alias --network-alias=comment_db_new_alias mongo:latest
+docker run -d --network=reddit --network-alias=post_new_alias -e "POST_DATABASE_HOST=post_db_new_alias" max2l/post:1.0
+docker run -d --network=reddit --network-alias=comment_new_alias -e "COMMENT_DATABASE_HOST=comment_db_new_alias" max2l/comment:1.0
+docker run -d --network=reddit -p 9292:9292 -e "POST_SERVICE_HOST=post_new_alias" -e "COMMENT_SERVICE_HOST=comment_new_alias"  max2l/ui:2.0
+```
+
+
