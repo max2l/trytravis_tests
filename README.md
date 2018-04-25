@@ -126,6 +126,18 @@ ansible-playbook playbook/site.yml
  - Создан том `reddit_db` для хранения данных MongoDB
  - Контейнеры docker запушены с ранее созданным томом.
  - Изменены сетевые алиасы для запуска контейнеров и определены переменные окружения для запуска этих контейнеров.
+ - Произведена пересборка образов на образе alpine:3.7. Место, занимаемое на диске после пересборки показано ниже.
+
+```
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+max2l/ui            1.0                 aad5472f5a45        16 hours ago        777MB
+max2l/ui            2.0                 d52ab9f8c18f        3 minutes ago       461MB
+max2l/ui            3.0                 04d702032f85        6 seconds ago       206MB
+max2l/comment       1.0                 3bd4aa40389b        17 hours ago        769MB
+max2l/comment       2.0                 12fc7affcc34        10 minutes ago      198MB
+max2l/post          1.0                 29a4cc69ad96        17 hours ago        102MB
+max2l/post          2.0                 9fd9b7022067        About an hour ago   61.8MB
+```
 
 ### Как запустить проект:
   - Создание docker machine в GCP
@@ -141,7 +153,7 @@ docker-machine create --driver google \
 ```
 docker pull mongo:latest
 docker build -t max2l/post:1.0 ./post-py
-docker build -t max2l/comment:1.0 ./commentß
+docker build -t max2l/comment:1.0 ./comment
 docker build -t max2l/ui:1.0 ./ui
 ```
   - Создане сети для приложения
