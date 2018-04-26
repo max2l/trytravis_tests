@@ -119,7 +119,7 @@ terraform apply
 cd docker-monolith/infra/ansible
 ansible-playbook playbook/site.yml
 ```
-## Homework 15. Docker-образа. Микросервисы.pdf
+## Homework 15. Docker-образа. Микросервисы
 ### В процессе сделано:
   - Созданы Docker файлы для сборки образов микросервисов
   - Произведена сборка микросервисов на основании ранее созданных файлов
