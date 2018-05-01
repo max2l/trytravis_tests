@@ -1,5 +1,4 @@
 version: '3.3'
-#env_file: .env
 services:
   post_db:
     image: mongo:3.2
@@ -11,18 +10,19 @@ services:
         aliases:
           - post_db
           - comment_db
+
   ui:
     build: ./ui
-    image: ${USERNAME}/ui:1.0
+    image: ${USERNAME}/ui:${VERSION_UI}
     container_name: ui
     hostname: ui
     ports:
-      - 9292:9292/tcp
+      - ${UI_SERVICE_PORT}:9292/tcp
     networks:
       - front_net
   post:
     build: ./post-py
-    image: ${USERNAME}/post:1.0
+    image: ${USERNAME}/post:${VERSION_POST}
     hostname: post
     container_name: post
     networks:
@@ -30,7 +30,7 @@ services:
       - front_net
   comment:
     build: ./comment
-    image: ${USERNAME}/comment:1.0
+    image: ${USERNAME}/comment:${VERSION_COMMENT}
     hostname: comment
     container_name: comment
     networks:
@@ -45,9 +45,9 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 10.0.2.0/24
+        - subnet: ${FRONTEND_NET}
   front_net:
     driver: bridge
     ipam:
       config:
-        - subnet: 10.0.1.0/24
+        - subnet: ${BACKEND_NET}
