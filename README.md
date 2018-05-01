@@ -56,3 +56,66 @@ docker kill -f id_контейнера
 ```
 docker system df
 ```
+## Homework 14. Docker контейнеры
+### В процессе сделано
+ - Установлено ПО `docker-machine`
+ - Создан новый проект в GCP
+ - gcloud настроен для работы с новым проектом
+ - В GCP создан Docker-хост
+ - Проверена работа систем namspases (PID, net, user space). При запуске контейнера с namspases PID по умолчанию в контейнере виден только процесс htop, при запуске namspases PID видны все процессы хоста.
+ - Создан `Docker` файл для запуска ПО `Puma` в контейнере
+ - Создан образ docker
+ - Создана учетная запись в ресурсе https://hub.docker.com/
+ - Созданый образ загружен в репозиторий hub.docker.com
+ - Произведен анализ изменений в запускаемом контейнере и созданого образа.
+ - Создан шаблон для packer
+ - Создана конфигурация для поднятия нескольких инстансев
+ - Созданы плейбуки с использованием динамических инвентори для установки докера и запуска там нескольких приложений.
+### Как запустить проект:
+ - Проверка статуса Docker машин
+```
+docker-machine ls
+```
+  - Определение переменных окружения для работы docker с удаленным docker-хостом
+```
+eval $(docker-machine env docker-host)
+```
+ - Запуска контейнера c различными степенями изоляции namspases PID
+```
+docker run --rm -ti tehbilly/htop
+docker run --rm --pid host -ti tehbilly/htop
+```
+ - Сборка образа docker
+```
+docker build -t reddit:latest .
+```
+ - Запуск контейнера используя namespase network host
+```
+docker run --name reddit -d --network=host reddit:latest
+```
+ - Поменять tag у образа и загрузить его в репозиторий на hub.docker.com 
+```
+docker tag reddit:latest max2l/otus-reddit:1.0
+docker push max2l/otus-reddit:1.0
+```
+ - Запуск образа из удалённого репозитория
+``` 
+docker run --name reddit -d -p 9292:9292 max2l/otus-reddit:1.0 
+```
+ - Создание образа ОС с установленным docker 
+```
+cd docker-monolith/infra/
+packer validate packer/packer_with_docker.json
+packer build packer/packer_with_docker.json
+```
+ - Создание инстансев для работы `Puma`
+```
+cd docker-monolith/infra/terraform
+terraform plan
+terraform apply
+```
+  - Развертывание инфраструктуры.
+```
+cd docker-monolith/infra/ansible
+ansible-playbook playbook/site.yml
+```
