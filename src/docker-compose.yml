@@ -45,9 +45,9 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: ${FRONTEND_NET}
+        - subnet: ${BACKEND_NET}
   front_net:
     driver: bridge
     ipam:
       config:
-        - subnet: ${BACKEND_NET}
+        - subnet: ${FRONTEND_NET}
