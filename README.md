@@ -196,7 +196,7 @@ docker run -d --network=reddit --network-alias=post_db --network-alias=comment_d
 docker run -d --network=reddit --network-alias=post_db_new_alias --network-alias=comment_db_new_alias mongo:latest
 docker run -d --network=reddit --network-alias=post_new_alias -e "POST_DATABASE_HOST=post_db_new_alias" max2l/post:1.0
 docker run -d --network=reddit --network-alias=comment_new_alias -e "COMMENT_DATABASE_HOST=comment_db_new_alias" max2l/comment:1.0
-docker run -d --network=reddit -p 9292:9292 -e "POST_SERVICE_HOST=post_new_alias" -e "COMMENT_SERVICE_HOST=comment_new_alias"  max2l/ui:2.0
+docker run -d --network=reddit -p 9292:9292 -e "POST_SERVICE_HOST=post_new_alias" -e "COMMENT_SERVICE_HOST=comment_new_alias" max2l/ui:2.0
 ```
 
 ## Homework 16. Docker. сети, docker-compose.
@@ -237,7 +237,8 @@ docker-compose -p new_project_base_name down
     - Cозданы тома с типом `bind`.
     - Источники этих томов находятся в директориях `src/ui/`, `src/comment/`, `src/post-py/`.
     - Целевая директория этих томов находится в каталоге `/app` 
-   
+  - Для запуска приложений Puma в `docker-compose.override.yml` переопределены команды запуска по умолчанию ипи старте Docker контейнеров.
+     
 ### Как запустить проект:
   - Создание docker machine в GCP
 ```
@@ -262,7 +263,7 @@ sudo ip netns exec default ip a
 docker network create reddit
 docker run -d --network=reddit --network-alias=post_db --network-alias=comment_db mongo:latest
 docker run -d --network=reddit --network-alias=post max2l/post:1.0
-docker run -d --network=reddit --network-alias=comment  max2l/comment:1.0
+docker run -d --network=reddit --network-alias=comment max2l/comment:1.0
 docker run -d --network=reddit -p 9292:9292 max2l/ui:1.0
 ```
  - Запуск контейнеров в изолированных сетях 
