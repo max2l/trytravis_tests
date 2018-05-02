@@ -22,6 +22,7 @@ services:
         source: ./ui
         target: /app
         read_only: true
+    command: ["puma", "--debug", "-w", "2"]
 
   post:
     build: ./post-py
@@ -46,6 +47,7 @@ services:
         source: ./comment
         target: /app
         read_only: true
+    command: ["puma", "--debug", "-w", "2"]
 
 volumes:
   post_db:
