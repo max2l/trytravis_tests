@@ -17,18 +17,35 @@ services:
       - ${UI_SERVICE_PORT}:9292/tcp
     networks:
       - front_net
+    volumes:
+      - type: bind
+        source: ./ui
+        target: /app
+        read_only: true
+
   post:
     build: ./post-py
     image: ${USERNAME}/post:${VERSION_POST}
     networks:
       - back_net
       - front_net
+    volumes:
+      - type: bind
+        source: ./post-py
+        target: /app
+        read_only: true
+
   comment:
     build: ./comment
     image: ${USERNAME}/comment:${VERSION_COMMENT}
     networks:
       - back_net
       - front_net
+    volumes:
+      - type: bind
+        source: ./comment
+        target: /app
+        read_only: true
 
 volumes:
   post_db:
