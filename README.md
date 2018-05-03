@@ -125,7 +125,7 @@ ansible-playbook playbook/site.yml
   - Произведена сборка микросервисов на основании ранее созданных файлов
   - Создан том `reddit_db` для хранения данных MongoDB
   - Контейнеры docker запушены с ранее созданным томом.
-  - Изменены сетевые алиасы для запуска контейнеров и определены переменные окружения для запуска этих контейнеров.
+  - Изменены сетевые алиасы и определены переменные окружения для запуска Docker контейнеров.
   - Произведена пересборка образов на образе alpine:3.7. Место, занимаемое на диске после пересборки показано ниже.
 
 ```
@@ -154,7 +154,20 @@ max2l/comment       1.0                 3bd4aa40389b        19 hours ago        
 max2l/post          1.0                 29a4cc69ad96        19 hours ago        102MB
 mongo               latest              a0f922b3f0a1        5 days ago          366MB
 ```
-
+  - Произведен другой подход при оптимизации размера образов. Для сборки ПО используются промежуточный образ и после сборки все необходимые файлы копируются в конечный образ. Для этого используются несколько директив `FROM` в Docker файлах. Размер образов после сборки показан ниже.
+```
+max2l/ui 5.0 1bc0d5a4815a 18 minutes ago 48.9MB
+max2l/ui 4.0 d69f1960093b 8 days ago 61.7MB
+max2l/ui 3.0 04d702032f85 8 days ago 206MB
+max2l/ui 2.0 d52ab9f8c18f 8 days ago 461MB
+max2l/ui 1.0 aad5472f5a45 8 days ago 777MB
+```
+```
+max2l/comment 4.0 17ddf9efd54a 27 minutes ago 40.8MB
+max2l/comment 3.0 634ff7b3ec7e 8 days ago 53.6MB
+max2l/comment 2.0 12fc7affcc34 8 days ago 198MB
+max2l/comment 1.0 3bd4aa40389b 8 days ago 769MB
+``` 
 ### Как запустить проект:
   - Создание docker machine в GCP
 ```
@@ -198,5 +211,3 @@ docker run -d --network=reddit --network-alias=post_new_alias -e "POST_DATABASE_
 docker run -d --network=reddit --network-alias=comment_new_alias -e "COMMENT_DATABASE_HOST=comment_db_new_alias" max2l/comment:1.0
 docker run -d --network=reddit -p 9292:9292 -e "POST_SERVICE_HOST=post_new_alias" -e "COMMENT_SERVICE_HOST=comment_new_alias"  max2l/ui:2.0
 ```
-
-
