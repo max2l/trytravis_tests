@@ -59,7 +59,7 @@ docker kill -f id_контейнера
 ```
 docker system df
 ```
-
+---
 ## Homework 14. Docker контейнеры
 
 ### В процессе сделано
@@ -125,7 +125,7 @@ terraform apply
 cd docker-monolith/infra/ansible
 ansible-playbook playbook/site.yml
 ```
-
+---
 ## Homework 15. Docker-образа. Микросервисы
 
 ### В процессе сделано:
@@ -220,7 +220,7 @@ docker run -d --network=reddit --network-alias=post_new_alias -e "POST_DATABASE_
 docker run -d --network=reddit --network-alias=comment_new_alias -e "COMMENT_DATABASE_HOST=comment_db_new_alias" max2l/comment:1.0
 docker run -d --network=reddit -p 9292:9292 -e "POST_SERVICE_HOST=post_new_alias" -e "COMMENT_SERVICE_HOST=comment_new_alias" max2l/ui:2.0
 ```
-
+---
 ## Homework 16. Docker. сети, docker-compose.
 ### В процессе сделано:
   - Произведена установка `docker-compose`.
@@ -356,4 +356,4 @@ sudo ip netns exec 234f51036f69 ip a
 docker network connect front_net post
 docker network connect front_net comment
 ```
-
+---
