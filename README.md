@@ -119,3 +119,95 @@ terraform apply
 cd docker-monolith/infra/ansible
 ansible-playbook playbook/site.yml
 ```
+## Homework 15. Docker-образа. Микросервисы
+### В процессе сделано:
+  - Созданы Docker файлы для сборки образов микросервисов
+  - Произведена сборка микросервисов на основании ранее созданных файлов
+  - Создан том `reddit_db` для хранения данных MongoDB
+  - Контейнеры docker запушены с ранее созданным томом.
+  - Изменены сетевые алиасы и определены переменные окружения для запуска Docker контейнеров.
+  - Произведена пересборка образов на образе alpine:3.7. Место, занимаемое на диске после пересборки показано ниже.
+
+```
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+max2l/ui            1.0                 aad5472f5a45        16 hours ago        777MB
+max2l/ui            2.0                 d52ab9f8c18f        3 minutes ago       461MB
+max2l/ui            3.0                 04d702032f85        6 seconds ago       206MB
+max2l/comment       1.0                 3bd4aa40389b        17 hours ago        769MB
+max2l/comment       2.0                 12fc7affcc34        10 minutes ago      198MB
+max2l/post          1.0                 29a4cc69ad96        17 hours ago        102MB
+max2l/post          2.0                 9fd9b7022067        About an hour ago   61.8MB
+```
+  - Произведена дополнительная оптимизация Docker файлов для уменьшения размера образов. В одном слое сделана установка ПО, сборка приложения и удаление ПО необходимого для сборки. Этот подход позволил еще больше сократить размер образа. Но я не думаю, что этот подход следует применять в дальнейшем. При его использовании усложняется отладка сборки и дальнейшее сопровождение образов. Для решения подобного рода задач лучше использовать отдельный Build сервер.
+
+```
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+max2l/post          3.0                 a06ae092a763        2 minutes ago       59.5MB
+max2l/comment       3.0                 634ff7b3ec7e        About an hour ago   53.6MB
+max2l/ui            4.0                 d69f1960093b        About an hour ago   61.7MB
+max2l/ui            3.0                 04d702032f85        3 hours ago         206MB
+max2l/ui            2.0                 d52ab9f8c18f        3 hours ago         461MB
+max2l/comment       2.0                 12fc7affcc34        3 hours ago         198MB
+max2l/post          2.0                 9fd9b7022067        3 hours ago         61.8MB
+max2l/ui            1.0                 aad5472f5a45        19 hours ago        777MB
+max2l/comment       1.0                 3bd4aa40389b        19 hours ago        769MB
+max2l/post          1.0                 29a4cc69ad96        19 hours ago        102MB
+mongo               latest              a0f922b3f0a1        5 days ago          366MB
+```
+  - Произведен другой подход при оптимизации размера образов. Для сборки ПО используются промежуточный образ и после сборки все необходимые файлы копируются в конечный образ. Для этого используются несколько директив `FROM` в Docker файлах. Размер образов после сборки показан ниже.
+```
+max2l/ui 5.0 1bc0d5a4815a 18 minutes ago 48.9MB
+max2l/ui 4.0 d69f1960093b 8 days ago 61.7MB
+max2l/ui 3.0 04d702032f85 8 days ago 206MB
+max2l/ui 2.0 d52ab9f8c18f 8 days ago 461MB
+max2l/ui 1.0 aad5472f5a45 8 days ago 777MB
+```
+```
+max2l/comment 4.0 17ddf9efd54a 27 minutes ago 40.8MB
+max2l/comment 3.0 634ff7b3ec7e 8 days ago 53.6MB
+max2l/comment 2.0 12fc7affcc34 8 days ago 198MB
+max2l/comment 1.0 3bd4aa40389b 8 days ago 769MB
+``` 
+### Как запустить проект:
+  - Создание docker machine в GCP
+```
+export GOOGLE_PROJECT=docker-201806
+docker-machine create --driver google \
+  --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+  --google-machine-type n1-standard-1 \
+  --google-zone europe-west1-b \
+  docker-host 
+```
+  - Сборка образов микросервисов
+```
+docker pull mongo:latest
+docker build -t max2l/post:1.0 ./post-py
+docker build -t max2l/comment:1.0 ./comment
+docker build -t max2l/ui:1.0 ./ui
+```
+  - Создане сети для приложения
+```
+docker network create reddit
+```
+  - Запуск контейнеров 
+```
+docker run -d --network=reddit --network-alias=post_db --network-alias=comment_db mongo:latest
+docker run -d --network=reddit --network-alias=post max2l/post:1.0
+docker run -d --network=reddit --network-alias=comment max2l/comment:1.0
+docker run -d --network=reddit -p 9292:9292 max2l/ui:2.0
+```
+  - Создание volume
+```
+ docker volume create reddit_db
+```
+  - Запуск MongoDB  с томом `reddit_db`
+```
+docker run -d --network=reddit --network-alias=post_db --network-alias=comment_db -v reddit_db:/data/db mongo:latest
+```
+  - Запуск контейнеров c другими сетевым алиасами
+```
+docker run -d --network=reddit --network-alias=post_db_new_alias --network-alias=comment_db_new_alias mongo:latest
+docker run -d --network=reddit --network-alias=post_new_alias -e "POST_DATABASE_HOST=post_db_new_alias" max2l/post:1.0
+docker run -d --network=reddit --network-alias=comment_new_alias -e "COMMENT_DATABASE_HOST=comment_db_new_alias" max2l/comment:1.0
+docker run -d --network=reddit -p 9292:9292 -e "POST_SERVICE_HOST=post_new_alias" -e "COMMENT_SERVICE_HOST=comment_new_alias"  max2l/ui:2.0
+```
