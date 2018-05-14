@@ -367,6 +367,8 @@ docker network connect front_net comment
   - Создан и зарегистрирован `Runner`.
   - Настройенно тестирование проекта с использрванием `pipeline`.
   - Произведено тестирвание проекта.
+  - Настроенна интеграция `gitlab` и `slack`.
+  - 
 ### Как запустить проект:
   - Интеграции git репозитоиря `GitLab CI`.
 ```
@@ -384,6 +386,19 @@ docker run -d --name gitlab-runner --restart always \
   - Регистрация `Runner`.
 ```
 docker exec -it gitlab-runner gitlab-runner register
+```
+или 
+```
+docker exec -it gitlab-runner gitlab-runner register \
+  --non-interactive \
+  --url "http://35.233.54.249/" \
+  --registration-token "dEsoJefiXvRX4txkoQHs" \
+  --executor "docker" \
+  --docker-image alpine:latest \
+  --description "docker-runner" \
+  --tag-list "linux,xenial,ubuntu,docker" \
+  --run-untagged \
+  --locked="false"
 ```
 ---
 
