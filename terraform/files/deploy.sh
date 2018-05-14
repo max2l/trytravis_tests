@@ -10,7 +10,7 @@ sudo gitlab-runner start
 sudo /usr/local/bin/gitlab-runner register \
   --non-interactive \
   --url "http://35.195.94.193/" \
-  --registration-token "dEsoJefiXvRX4txkoQHs" \
+  --registration-token "Tocken For GitLab" \
   --executor "docker" \
   --docker-image alpine:latest \
   --description "docker-runner" \
