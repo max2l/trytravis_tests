@@ -359,61 +359,56 @@ docker network connect front_net comment
 ---
 ## Homework 17. Gitlab CI. Построение процесса непрерывной интеграции.
 ### В процессе сделано:
-  - Создана виртуальная машина в GCP и проистведена omnibus-установка `GitLab CI` с использованием docker-compose.
-  - Отключена регистрация новых пользователей.
-  - В группе `homework` Создан новый проект `example`
-  - Произведена интеграция git репозитория `max2l_microservices` в созданом инстансе `GitLab CI`.
-  - Описан `pipeline` в файле `.gitlab-ci.yml`.
-  - Создан и зарегистрирован `Runner`.
-  - Настройенно тестирование проекта с использрванием `pipeline`.
-  - Произведено тестирвание проекта.
-  - Настроенна интеграция `gitlab` и `slack`.
-  - 
+- Создана виртуальная машина в GCP и произведена omnibus-установка `GitLab CI` с использованием docker-compose.
+- Отключена регистрация новых пользователей.
+- В группе `homework` Создан новый проект `example`
+- Произведена интеграция git репозитория `max2l_microservices` в созданном инстансе `GitLab CI`.
+- Описан `pipeline` в файле `.gitlab-ci.yml`.
+- Создан и зарегистрирован `Runner`.
+- Настроенно тестирование проекта с использованием `pipeline`.
+- Произведено тестирование проекта.
+- Настроенна интеграция `gitlab` и `slack`.
+- Для установки нескольких инстансев `Gitlab Runner` разработана конфигурация для `Terraform`. Количество поднимаемых интансев необходимо задать в переменной `count_instances` изменив файл `count_instances`. Для оптимизации времени разворачивания инстансев можно создать образ с установленным `docker` и `Girlab Runner` используя `Packer`.
+- Если необходимо произвести установку `Runner` не в облаке, а на "железных" серверах с предустановленной OC, то для этого можно использовать `Ansible`. Предварительно на серверах должны быть "разложены" ssh ключи. 
+- Если это действие необходимо произвести только один раз, то можно использовать утилиту `pdsh`. При этом на всех серверах должен быть настроем доступ по ssh ключам.
 ### Как запустить проект:
-  - Интеграции git репозитоиря `GitLab CI`.
+- Интеграции git репозитоиря `GitLab CI`.
 ```
 git checkout -b gitlab-ci-1
 git remote add gitlab http://max2l_microservices/homework/example.git
 git push gitlab gitlab-ci-1
 ```
-  - Создание `Runner`.
+- Создание `Runner`.
 ```
 docker run -d --name gitlab-runner --restart always \
-    -v /srv/gitlab-runner/config:/etc/gitlab-runner \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    gitlab/gitlab-runner:latest
+-v /srv/gitlab-runner/config:/etc/gitlab-runner \
+-v /var/run/docker.sock:/var/run/docker.sock \
+gitlab/gitlab-runner:latest
 ```
-  - Регистрация `Runner`.
+- Регистрация `Runner`.
 ```
 docker exec -it gitlab-runner gitlab-runner register
 ```
 или 
 ```
 docker exec -it gitlab-runner gitlab-runner register \
-  --non-interactive \
-  --url "http://35.233.54.249/" \
-  --registration-token "dEsoJefiXvRX4txkoQHs" \
-  --executor "docker" \
-  --docker-image alpine:latest \
-  --description "docker-runner" \
-  --tag-list "linux,xenial,ubuntu,docker" \
-  --run-untagged \
-  --locked="false"
+--non-interactive \
+--url "http://35.233.54.249/" \
+--registration-token "Token for runer in gitlab" \
+--executor "docker" \
+--docker-image alpine:latest \
+--description "docker-runner" \
+--tag-list "linux,xenial,ubuntu,docker" \
+--run-untagged \
+--locked="false"
+```
+- Запуск нескольких инстансев `Runner`.
+- Количество запускаемых инстансев задается в переменной `count_instances`. Для этого необходимо отредактировать файл `count_instances`
+- Далее необходимо выполнить команды
+```
+terraform play
+terraform apply
 ```
 ---
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
