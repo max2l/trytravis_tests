@@ -357,3 +357,48 @@ docker network connect front_net post
 docker network connect front_net comment
 ```
 ---
+## Homework 17. Gitlab CI. Построение процесса непрерывной интеграции.
+### В процессе сделано:
+  - Создана виртуальная машина в GCP и проистведена omnibus-установка `GitLab CI` с использованием docker-compose.
+  - Отключена регистрация новых пользователей.
+  - В группе `homework` Создан новый проект `example`
+  - Произведена интеграция git репозитория `max2l_microservices` в созданом инстансе `GitLab CI`.
+  - Описан `pipeline` в файле `.gitlab-ci.yml`.
+  - Создан и зарегистрирован `Runner`.
+  - Настройенно тестирование проекта с использрванием `pipeline`.
+  - Произведено тестирвание проекта.
+### Как запустить проект:
+  - Интеграции git репозитоиря `GitLab CI`.
+```
+git checkout -b gitlab-ci-1
+git remote add gitlab http://max2l_microservices/homework/example.git
+git push gitlab gitlab-ci-1
+```
+  - Создание `Runner`.
+```
+docker run -d --name gitlab-runner --restart always \
+    -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    gitlab/gitlab-runner:latest
+```
+  - Регистрация `Runner`.
+```
+docker exec -it gitlab-runner gitlab-runner register
+```
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
