@@ -1,0 +1,6 @@
+project = "docker-201806"
+public_key_path = "~/.ssh/id_rsa.pub"
+private_key_path = "~/.ssh/id_rsa"
+disk_image = "ubuntu-1804-bionic-v20180426b"
+count_instances = 3
+
