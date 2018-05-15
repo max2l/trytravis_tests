@@ -4,3 +4,4 @@
 *.tfstate.backup
 docker-3eb4b55515b0.json
 .env
+*.terraform/files/deploy.sh

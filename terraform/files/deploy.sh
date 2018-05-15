@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -xe
 
 sudo wget -O /usr/local/bin/gitlab-runner https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
 sudo chmod +x /usr/local/bin/gitlab-runner
@@ -9,8 +9,8 @@ sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab
 sudo gitlab-runner start
 sudo /usr/local/bin/gitlab-runner register \
   --non-interactive \
-  --url "http://35.195.94.193/" \
-  --registration-token "Tocken For GitLab" \
+  --url "http://35.195.126.79/" \
+  --registration-token "dEsoJefiXvRX4txkoQHs" \
   --executor "docker" \
   --docker-image alpine:latest \
   --description "docker-runner" \
