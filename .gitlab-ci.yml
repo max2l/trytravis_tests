@@ -53,7 +53,7 @@ production:
   stage: production
   when: manual
   only:
-    - /^\d+\.\d+\d+/
+    - /^\d+\.\d+.\d+/
   script:
     - echo 'Deploy'
   environment:
