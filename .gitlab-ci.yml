@@ -49,10 +49,10 @@ staging:
 
 production:
   stage: production
+  when: manual
   script:
     - echo 'Deploy'
   environment:
     name: production
     url: http://35.195.126.79
-
 
