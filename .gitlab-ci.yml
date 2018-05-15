@@ -38,6 +38,16 @@ deploy_dev_job:
     name: dev
     url: http://35.195.126.79
 
+branch: rewiew:
+  stage: rewiew
+  script echo "Deploy to $CI_ENVIRONMENT_SLUG"
+  environment:
+    name: branch/$CI_COMMIT_REF_NAME
+  only:
+    - branches
+  except:
+    - master:
+
 staging:
   stage: stage
   when: manual
