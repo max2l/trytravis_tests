@@ -269,7 +269,7 @@ docker-machine create --driver google \
   --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
   --google-machine-type n1-standard-1 \
   --google-zone europe-west1-b \
-  docker-host 
+  docker-host
 ```
   - Список Network Name Space
 ```
@@ -409,4 +409,35 @@ docker exec -it gitlab-runner gitlab-runner register \
 terraform play
 terraform apply
 ```
+---
+## Homework 18. Gitlab CI. Непрерывная поставка
+### В процессе сделано:
+  - Создан новый проект в `GitLab` с именем `example2`
+  - Ветка `gitlab-ci-2` настроена для работы с новым проектом.
+  - Настроен `runner` для работы с новым проектом.
+  - Настроены окружения `dev`, `stage` и `prod` для работы с новым проектом.
+  - Настроено два `job` для запуска проекта с использованием кнопки.
+  - Настроена работа этапов `stage` и `production` только при наличии тегов в ветке репозитория.
+  - Настроены динамические окружения для работы `GitLab`
+  - Создан контейнер `max2l/docker_machine_gcp` содержащий `docker`, `docker-machine` и `google-cloud-sdk` для упрощения развертывания и удаления новых серверов и для деплоя приложений.
+  - Настроено создание нового сервера при пуше в репозиторий ветки отличной от `master`.
+  - Настроено удаление созданного сервера с использованием кнопки.
+  - В шаге `build` настроена сборка нового контейнера с приложением `reddit`.
+  - Настроено развертывание приложения на созданном сервере.
+   
+### Как запустить проект:
+  - Запуск остановленого проэкта
+```
+docker-machine start docker-host
+```
+  - Соединение с виртуальной машиной для изменения настроек
+```
+docker-machine start docker-host
+```
+  - При запуске сервера с использованием `docker-machine` необходимо убедиться, что IP сервера не изменился. Если IP изменился, то необходимо:
+    - Поменять IP адрес в настройках `runner` по пути `/srv/gitlab-runner/config/config.toml`.
+    - Поменять настройки `GitLab` в docker-compose файле по пути `/srv/gitlab/docker-compose.yml`
+  - Все созданные `job` должны работать без ошибок.
+  - При пуше ветки отличной от мастера должен создаться новый сервер.
+  - На сервере должно развернуться `reddit` приложение.
 ---

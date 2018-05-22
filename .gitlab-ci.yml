@@ -22,7 +22,13 @@ build_job:
   stage: build
   script:
     - echo 'Building'
-    - bundle install
+    - echo ${GCP_SECURE_JSON} > gcp.json
+    - gcloud auth activate-service-account --key-file gcp.json
+    - eval $(docker-machine -s cert env --shell bash ${CI_COMMIT_REF_SLUG})
+    - docker build -t ${DOCKER_HUB_LOGIN}/${CI_COMMIT_REF_SLUG} ./
+    - docker login --username ${DOCKER_HUB_LOGIN} --password ${DOCKER_HUB_PASS}
+    - echo "${DOCKER_HUB_PASS}"|docker login  --username "${DOCKER_HUB_LOGIN}" --password-stdin
+    - docker push ${DOCKER_HUB_LOGIN}/${CI_COMMIT_REF_SLUG}
 
 test_unit_job:
   stage: test
@@ -60,13 +66,7 @@ deploy_dev_job:
   stage: review
   script:
     - echo 'Deploy'
-    - docker-machine --storage-path cert env --shell bash gitlab-ci-2
     - eval $(docker-machine -s cert env --shell bash ${CI_COMMIT_REF_SLUG})
-    - docker build -t ${DOCKER_HUB_LOGIN}/${CI_COMMIT_REF_SLUG} ./
-    # For deploy to stage and prod.
-    - docker login --username ${DOCKER_HUB_LOGIN} --password ${DOCKER_HUB_PASS}
-    - echo "${DOCKER_HUB_PASS}"|docker login  --username "${DOCKER_HUB_LOGIN}" --password-stdin
-    - docker push ${DOCKER_HUB_LOGIN}/${CI_COMMIT_REF_SLUG}
     - docker run -d -p 9292:9292 ${DOCKER_HUB_LOGIN}/${CI_COMMIT_REF_SLUG} 
 
   environment:
@@ -78,7 +78,6 @@ drop review server:
   image: max2l/docker_machine_gcp:0.2
   script: 
     - echo "Drop server from GCP"
-    - echo ${GCP_SECURE_JSON} > gcp.json
     - docker-machine -s cert rm -f ${CI_COMMIT_REF_SLUG} || rm -rf cert/*
 
   environment:
