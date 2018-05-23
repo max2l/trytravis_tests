@@ -20,11 +20,11 @@ before_script:
 
 build_job:
   stage: build
+  image: max2l/docker_machine_gcp:0.2
   script:
     - echo 'Building'
     - echo ${GCP_SECURE_JSON} > gcp.json
     - gcloud auth activate-service-account --key-file gcp.json
-    - eval $(docker-machine -s cert env --shell bash ${CI_COMMIT_REF_SLUG})
     - docker build -t ${DOCKER_HUB_LOGIN}/${CI_COMMIT_REF_SLUG} ./
     - docker login --username ${DOCKER_HUB_LOGIN} --password ${DOCKER_HUB_PASS}
     - echo "${DOCKER_HUB_PASS}"|docker login  --username "${DOCKER_HUB_LOGIN}" --password-stdin
