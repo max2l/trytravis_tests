@@ -56,7 +56,15 @@ services:
       - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
     networks:
       - back_net
+
+  mongodb-exporter:
+    image: mirantisworkloads/mongodb-prometheus-exporter:1.0.0
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+    networks:
+      - back_net
       - front_net
+    command: ./mongodb_exporter
 
 volumes:
   post_db:
