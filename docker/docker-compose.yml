@@ -66,6 +66,13 @@ services:
       - front_net
     command: ./mongodb_exporter
 
+  cloudprober-exporter:
+    image: max2l/cloudprober:0.2
+    networks:
+      - back_net
+      - front_net
+    command: [ "/cloudprober", "-config_file", "/etc/cloudprober.cfg" ]
+
 volumes:
   post_db:
   prometheus_data:
