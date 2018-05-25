@@ -2,24 +2,40 @@ image: ruby:2.4.2
 stages:
   - build
   - test
-  - deploy
+  - review
+  - stop_review
+  - stage
+  - production
+
+cache:
+  paths:
+    - reddit
+    - cert
+
 variables:
   DATABASE_URL: 'mongodb://mongo/user_posts'
 
 before_script:
   - cd reddit
-  - bundle install
 
 build_job:
   stage: build
+  image: max2l/docker_machine_gcp:0.2
   script:
     - echo 'Building'
+    - echo ${GCP_SECURE_JSON} > gcp.json
+    - gcloud auth activate-service-account --key-file gcp.json
+    - docker build -t ${DOCKER_HUB_LOGIN}/${CI_COMMIT_REF_SLUG} ./
+    - docker login --username ${DOCKER_HUB_LOGIN} --password ${DOCKER_HUB_PASS}
+    - echo "${DOCKER_HUB_PASS}"|docker login  --username "${DOCKER_HUB_LOGIN}" --password-stdin
+    - docker push ${DOCKER_HUB_LOGIN}/${CI_COMMIT_REF_SLUG}
 
 test_unit_job:
   stage: test
   services:
     - mongo:latest
   script:
+    - bundle install
     - ruby simpletest.rb
 
 test_integration_job:
@@ -27,8 +43,72 @@ test_integration_job:
   script:
     - echo 'Testing 2'
 
-deploy_job:
-  stage: deploy
+branch review:
+  stage: review
+  image: max2l/docker_machine_gcp:0.2
+#  when: manual
+  script: 
+    - echo "Deploy to $CI_ENVIRONMENT_SLUG"
+    - echo ${GCP_SECURE_JSON} > gcp.json
+    - gcloud auth activate-service-account --key-file gcp.json
+    - docker-machine -s cert create --driver google --google-project "${GOOGLE_PROJECT}"
+        --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts
+        --google-machine-type n1-standard-1
+        --google-zone europe-west1-b ${CI_COMMIT_REF_SLUG}
+
+  only:
+    - branches
+  except:
+    - master
+
+deploy_dev_job:
+  image: max2l/docker_machine_gcp:0.2
+  stage: review
   script:
     - echo 'Deploy'
+    - eval $(docker-machine -s cert env --shell bash ${CI_COMMIT_REF_SLUG})
+    - docker run -d -p 9292:9292 ${DOCKER_HUB_LOGIN}/${CI_COMMIT_REF_SLUG} 
+
+  environment:
+    name: dev
+    url: http://dev.example.com/
+
+drop review server:
+  stage: stop_review
+  image: max2l/docker_machine_gcp:0.2
+  script: 
+    - echo "Drop server from GCP"
+    - docker-machine -s cert rm -f ${CI_COMMIT_REF_SLUG} || rm -rf cert/*
+
+  environment:
+    name: branch/$CI_COMMIT_REF_NAME
+    action: stop
+  when: manual
+  only:
+    - branches
+  except:
+    - master
+
+staging:
+  stage: stage
+  when: manual
+  only:
+    - /^\d+\.\d+.\d+/
+  script:
+    - echo 'Deploy'
+    
+  environment:
+    name: stage
+    url: http://beta.example.com/
+
+production:
+  stage: production
+  when: manual
+  only:
+    - /^\d+\.\d+.\d+/
+  script:
+    - echo 'Deploy'
+  environment:
+    name: production
+    url: http://example.com/
 
