@@ -491,3 +491,50 @@ https://hub.docker.com/r/max2l/cloudprober/
 docker-machine rm docker-host
 ```
 ---
+## Homework 20.Мониторинг приложения. Визуализация. Алертинг.
+### В процессе сделано:
+  - Создан отдельный файл `docker-compose-monitoring.yml` для разворачивания контейнеров относящихся к мониторингу.
+  - Развернут анализатор ресурсов `cAdvisor`.
+  - Развернута система мониторинга `Grafana`.
+  - Произведена интеграция `cAdvisor` и `Grafana` с системой мониторинга `Prometeus`.
+  - Добавлена информация о post сервисе в конфигурацию `Prometheus`.
+  - Создан график для отображения частоты вазова страниц микросервиса UI.
+  - Создан график для отображения частоты вазова страниц с HTTP кодами `4XX` `5XX`.
+  - Создан график отображающий 95 перцентиль выборки времени отображения запросов с помощью функции `histogram_quantile()`
+  - Настроена интеграция `alertmanager` с `slack` чатом.
+  - В `Makefile` добавлена сборка docker образа `alertmanager`
+### Как запустить проект:
+  - Запуск контейнеров с микросервисами приложения `Puma`
+```
+docker-compose up -d
+```
+  - Запуск контейнеров для мониторинга приложения `Puma`
+```
+docker-compose -f docker-compose-monitoring.yml up -d
+```
+  - Создание правила firewall для доступа к анализатору ресурсов `cAdvisor`.
+```
+gcloud compute firewall-rules create cadvisor-default --allow tcp:8080
+```
+  - Создание правила firewall для доступа к системе мониторинга `Grafana`.
+```
+gcloud compute firewall-rules create grafana-default --allow tcp:3000
+```
+ - Запуск `Grafana`
+```
+docker-compose -f docker-compose-monitoring.yml up -d grafana
+```
+  - Пересоздание docker инфраструктуры мониторинга.
+```
+docker-compose -f docker-compose-monitoring.yml down
+docker-compose -f docker-compose-monitoring.yml up -d
+```
+  - Выражение дня построения графика отображающего 95 перцентиль выборки времени отображения запросов.
+```
+histogram_quantile(0.95, sum(rate(ui_request_latency_seconds_bucket[5m])) by (le))
+```
+  - Создание правила firewall для доступа к `Alertmanager`.
+```
+gcloud compute firewall-rules create alertmanager-default --allow tcp:9093
+```
+---
