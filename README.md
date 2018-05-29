@@ -441,3 +441,53 @@ docker-machine start docker-host
   - При пуше ветки отличной от мастера должен создаться новый сервер.
   - На сервере должно развернуться `reddit` приложение.
 ---
+## Homework 19. Введение в мониторинг. Системы мониторинга
+### В процессе сделано:
+  - Произведена настройка правил фаервола для работы с `Prometheus` и `Puma`.
+  - Создан Docker хост в GCE и на нем развернута система монитринга `Prometheus`.
+  - Произведен анализ метрик и целей `Targets` которые `Prometheus` собирает по умолчанию.
+  - Произведена настройка `Prometheus` для интеграции микросервисов приложения `Puma`.
+  - Произведена пере сборка Docker образов для интеграции с `Prometheus`
+  - Автоматизирован запуск контейнеров с помощью `docker-compose`.
+  - Произведен анализ метрик, целей и healthchecks микросервисов приложения `Puma`
+  - Настроен `Node exporter` для сбора информации о работе Docker хоста.
+  - Произведен анализ метрик которые формирует `Node exporter`.
+  - Созданые Docker образы сохранены в **docker hub**.
+  - Добавлен в `Prometeus` мониторинг базы `MongoDB` с помощью экспортера `mirantisworkloads/mongodb-prometheus-exporter`.
+  - Добавлен мониторинг микросервисов **comment**, **post**, **ui** с помощью blackbox экспортера `Cloudprober`.
+  - Создан `Makefile` для автоматизации сборки Docker образов и сохранения их в `Git Hub`.
+### Как запустить проект:
+  - Правила фаервола для работы `Prometheus` и `Puma`.
+```
+gcloud compute firewall-rules create prometheus-default --allow tcp:9090
+gcloud compute firewall-rules create puma-default --allow tcp:9292
+```
+  - Создание Docker хоста в GCE.
+```
+export GOOGLE_PROJECT=docker-201806
+docker-machine create --driver google \
+        --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+        --google-machine-type n1-standard-1 \
+        --google-zone europe-west1-b docker-host
+docker-machine ls
+eval $(docker-machine env docker-host)
+```
+  - Просмотреть все метрики можно по url `http://gcp_host_ip:9292/metrics`.
+  - Просмотреть `targets` можно по url `http://gcp_host_ip:9292/targets`.
+  - Удаление Docker хоста в GCP.
+```
+docker-machine rm docker-host
+```
+  - Ссылки на docker images.
+```
+https://hub.docker.com/r/max2l/prometheus/
+https://hub.docker.com/r/max2l/ui/
+https://hub.docker.com/r/max2l/post/
+https://hub.docker.com/r/max2l/comment/
+https://hub.docker.com/r/max2l/cloudprober/
+```
+  - Удаление Docker сервера.
+```
+docker-machine rm docker-host
+```
+---
