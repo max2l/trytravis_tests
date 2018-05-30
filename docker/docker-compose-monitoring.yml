@@ -77,6 +77,15 @@ services:
     ports:
       - 9093:9093
 
+  telegraf:
+    image: max2l/telegraf:0.1
+    environment:
+       - TELEGRAF_CONFIG_PATH=/etc/telegraf/telegraf.conf
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    networks:
+      - back_net
+
 networks:
   back_net:
     driver: bridge
