@@ -71,9 +71,13 @@ services:
       - 3000:3000
 
   alertmanager:
-    image: ${USERNAME}/alertmanager
-    command:
-      - '--config.file=/etc/alertmanager/config.yml'
+    image: ${USERNAME}/alertmanager:${ALERTMANAGER_VER}
+    environment:
+      - GMAIL_ACCOUNT=$GMAIL_ACCOUNT
+      - GMAIL_AUTH_TOKEN=$GMAIL_AUTH_TOKEN
+
+    networks:
+      - back_net
     ports:
       - 9093:9093
 

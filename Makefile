@@ -26,6 +26,9 @@ build_alertmanager:
 build_telegraf:
 		cd monitoring/telegraf && docker build -t $(USER_NAME)/telegraf:$(TELEGRAF_VER) .
 
+build_alertmanager:
+		cd monitoring/alertmanager && docker build -t $(USER_NAME)/alertmanager:$(ALERTMANAGER_VER) .
+
 docker_hub_login:
 		echo $(DOCKER_HUB_PASSWORD)|docker login --username $(USER_NAME) --password-stdin
 

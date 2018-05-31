@@ -1,10 +1,24 @@
 global:
   slack_api_url: 'https://hooks.slack.com/services/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'
+
 route:
-  receiver: 'slack-notifications'
+  receiver: 'gmail-notifications'
+  routes:
+    - receiver: 'gmail-notifications'
+      continue: true
+    - receiver: 'slack-notifications'
 
 receivers:
 - name: 'slack-notifications'
   slack_configs:
   - channel: '#maksim_gorbachev'
+
+- name: 'gmail-notifications'
+  email_configs:
+  - to: $GMAIL_ACCOUNT
+    from: $GMAIL_ACCOUNT
+    smarthost: smtp.gmail.com:587
+    auth_username: "$GMAIL_ACCOUNT"
+    auth_identity: "$GMAIL_ACCOUNT"
+    auth_password: "$GMAIL_AUTH_TOKEN"
 
