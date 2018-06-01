@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'sinatra', '~> 2.0.1'
+gem 'sinatra'
 gem 'bson_ext'
 gem 'mongo'
 gem 'puma'
@@ -9,4 +9,3 @@ gem 'rack'
 gem 'rufus-scheduler'
 gem 'json'
 gem 'tzinfo-data'
-
