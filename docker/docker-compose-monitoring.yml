@@ -1,0 +1,108 @@
+version: '3.3'
+services:
+  prometheus:
+    image: ${USERNAME}/prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=1d'
+    networks:
+      - back_net
+      - front_net
+
+  node-exporter:
+    image: prom/node-exporter:v0.15.2
+    user: root
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
+    networks:
+      - back_net
+
+  mongodb-exporter:
+    image: mirantisworkloads/mongodb-prometheus-exporter:1.0.0
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+    networks:
+      - back_net
+      - front_net
+    command: ./mongodb_exporter
+
+  cloudprober-exporter:
+    image: max2l/cloudprober:0.2
+    networks:
+      - back_net
+      - front_net
+    command: [ "/cloudprober", "-config_file", "/etc/cloudprober.cfg" ]
+
+  cadvisor:
+    image: google/cadvisor:v0.29.0
+    volumes:
+      - '/:/rootfs:ro'
+      - '/var/run:/var/run:rw'
+      - '/sys:/sys:ro'
+      - '/var/lib/docker/:/var/lib/docker:ro'
+    networks:
+      - back_net
+
+    ports:
+      - '8080:8080'
+  grafana:
+    image: grafana/grafana:5.0.0
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=possw0rd
+    networks:
+      - back_net
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+
+  alertmanager:
+    image: ${USERNAME}/alertmanager:${ALERTMANAGER_VER}
+    environment:
+      - GMAIL_ACCOUNT=$GMAIL_ACCOUNT
+      - GMAIL_AUTH_TOKEN=$GMAIL_AUTH_TOKEN
+
+    networks:
+      - back_net
+    ports:
+      - 9093:9093
+
+  telegraf:
+    image: max2l/telegraf:0.1
+    environment:
+       - TELEGRAF_CONFIG_PATH=/etc/telegraf/telegraf.conf
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    networks:
+      - back_net
+
+networks:
+  back_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${BACKEND_NET}
+  front_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${FRONTEND_NET}
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
