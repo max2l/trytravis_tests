@@ -1,5 +1,7 @@
 #!/bin/sh -xe
-cd ..
+
+cd ../the_hard_way/
+
 {
   KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-hard-way \
     --region $(gcloud config get-value compute/region) \
@@ -24,5 +26,6 @@ cd ..
 kubectl get componentstatuses
 
 kubectl get nodes
+
 cd -
 

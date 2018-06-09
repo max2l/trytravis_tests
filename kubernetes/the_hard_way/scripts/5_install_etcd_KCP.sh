@@ -1,12 +1,16 @@
 #!/bin/sh -xe
-cd ..
+
+cd ../the_hard_way/
+
 for instance in controller-0 controller-1 controller-2; do
-  gcloud compute ssh ${instance} --command /root/setup_etcd.sh
+  gcloud compute ssh ${instance} --command "sudo /tmp/setup_etcd.sh"
 done
 
 for instance in controller-0 controller-1 controller-2; do
-  gcloud compute ssh ${instance} --command /root/setup_KubernetesControlPlane.sh
+  gcloud compute ssh ${instance} --command "sudo /tmp/setup_KubernetesControlPlane.sh"
 done
+
+gcloud compute ssh controller-0  --command /tmp/createRBACforKubeletAuthorization.sh
 
 {
   KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-hard-way \
@@ -35,5 +39,6 @@ done
     --region $(gcloud config get-value compute/region) \
     --target-pool kubernetes-target-pool
 }
+
 cd -
 

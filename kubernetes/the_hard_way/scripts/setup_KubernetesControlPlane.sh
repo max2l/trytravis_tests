@@ -154,4 +154,3 @@ sudo systemctl restart nginx
 sudo systemctl enable nginx
 kubectl get componentstatuses --kubeconfig admin.kubeconfig
 
-

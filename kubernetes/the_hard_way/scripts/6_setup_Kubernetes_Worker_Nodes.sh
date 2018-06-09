@@ -1,7 +1,9 @@
 #!/bin/sh -xe
-cd ..
+cd ../the_hard_way/
+
 for instance in worker-0 worker-1 worker-2; do
-  gcloud compute ssh ${instance} --command /root/install_Soft_to_Worker_Nodes.sh
+  gcloud compute ssh ${instance} --command "/tmp/install_Soft_to_Worker_Nodes.sh"
 done
+
 cd -
 

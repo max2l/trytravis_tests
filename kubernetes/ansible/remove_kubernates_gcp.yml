@@ -1,0 +1,8 @@
+---
+- name: run the playbook tasks on the localhost
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: Removing all data from GCP
+      script: ../the_hard_way/scripts/cleanup.sh
+

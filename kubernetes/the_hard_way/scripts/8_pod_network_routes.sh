@@ -1,5 +1,7 @@
 #!/bin/sh -xe
-cd ..
+
+cd ../the_hard_way/
+
 for instance in worker-0 worker-1 worker-2; do
   gcloud compute instances describe ${instance} \
     --format 'value[separator=" "](networkInterfaces[0].networkIP,metadata.items[0].value)'
@@ -13,4 +15,6 @@ for i in 0 1 2; do
 done
 
 gcloud compute routes list --filter "network: kubernetes-the-hard-way"
+
 cd - 
+
