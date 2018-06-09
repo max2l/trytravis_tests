@@ -543,3 +543,59 @@ histogram_quantile(0.95, sum(rate(ui_request_latency_seconds_bucket[5m])) by (le
 gcloud compute firewall-rules create alertmanager-default --allow tcp:9093
 ```
 ---
+## Homework 21. Логирование и треисинг.
+### В процессе сделано:
+  - Собраны Docker образы для работы со стеком ELK.
+  - Развернут Docker хост в облаке GCP.
+  - Создан compose файл `docker/docker-compose-logging.yml` для разворачивания стека ELK.
+  - В дикектории `logging/fluentd` созданы файлы для разворачивания docker контейнера `Fluentd`. Его зауск нербходимо производить с использованием compose файла `docker/docker-compose-logging.yml`.
+  - В файле `logging/fluentd/fluent.conf` описана конфигурация `Fluentd`.
+  - Настроена отправка логирования событий возникающих при работе контейнера `post` в `Fluentd`.
+  - Произведен анализ логов работы контейнеров приложения `Puma`.
+  - Созданы фильтры для разбивки структурированных и не структурированных логов на поля.
+  - Развернут сервис для распределенного трейсинга `Zipkin`.
+  - Произведен анализ "долгой" работы микросервисов приложения `Puma` с использованием `Zipkin`. В ходе анализа установлено:
+    - Самая большая задержка при работе приложения связана с долгим откликом микросервиса `post`. Каждое обращение книму занимает не менее 3 секунд.
+    - В микросервисе `post` наиболее долго отрабатывает span `db_find_single_post`
+    - Долгая работа связана из - за присутствия в коде декоратора `@zipkin_span` выражения `time.sleep(3)`.
+    
+### Как запустить проект:
+ - Создание docker хоста
+```
+docker-machine create --driver google --google-machine-image     https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+    --google-machine-type n1-standard-1 \
+    --google-open-port 5601/tcp \
+    --google-open-port 9292/tcp \
+    --google-open-port 9411/tcp \
+    logging
+```
+  - Cборка docker образа `Fluentd`.
+```
+docker build -t max2l/fluentd
+```
+  - Запуск микросервисов приложения `Puma`
+```
+docker-compose up -d
+```
+  - Просмотр событий формируемых при работе docker контейнера микросервиса `post`.
+```
+docker-compose logs -f post
+```
+  - Запуск контенеров `ELK` и `Fluentd`
+```
+docker-compose -f docker-compose-logging.yml up -d
+```
+  - Фильтр для `UI` сервиса который производит разбивку неструктурированного лога на поля. 
+```
+<filter service.ui>
+  @type parser
+  format grok
+  grok_pattern service=%{WORD:service} \| event=%{WORD:event} \| path=%{GREEDYDATA:path} \| request_id=%{GREEDYDATA:request_id} \| remote_addr=%{IPV4:remote_addr} \| method= %{WORD:method} \| response_status=%{NUMBER:response_status}
+  key_name message
+</filter>
+```
+  - Настройка firewall для доступа к приложению `Zipkin`.
+```
+gcloud compute firewall-rules create zipkin-default --allow tcp:9411
+```
+---
