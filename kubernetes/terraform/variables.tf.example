@@ -1,0 +1,9 @@
+variable "gcp_project" {
+  default     = "gcp-example-project"
+  description = "GCP Project Name"
+}
+
+variable "gcp_machime_type" {
+  default     = "g1-small"
+  description = "GCP Machine Type"
+}
