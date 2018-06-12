@@ -669,3 +669,89 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
     ansible-playbook kubernetes/ansible/remove_kubernates_gcp.yml 
     ```
 ---
+## Homework 23. Kubernetes.Controllers,Security.
+### В процессе сделано:
+  - Развернуто локальное окружение для работы с `Kubernetes`.
+    - Установлен `kubectl`.
+    - Установлен `Minikube`.
+    - Запушен Minukube-кластер.
+    - Произведена проверка работы кластера.
+    - Изучена конфигурация `kubectl`.
+    - Созданы Deployment ресурсы для микросервисов приложения `Puma`.
+    - Все микросервисы запушены в `Kubernetes` кластере.
+    - Настроена взаимосвязь с использованием `Services` между микросарвисами приложения.
+    - Настроены переменные окружения для взаимодействия контейнеров с контейнером базы `mongodb`.
+    - Настроено взаимодействие с микросервисом `ui` из внешней сети.
+    - Произведен анализ работы кластера испорльзуя `dashboard`
+    - Настроен отдельный `Namespace` для запуска в нем микросервисов.
+    - Добавлена информация о `Namespace` в `UI`
+  - Развернут `Kubernetes` в GKE.
+  - Запущен reddit в `Kubernetes`.
+
+### Как запустить проект:
+  - Запуск микросервисов в кластере.
+  ```
+  kubectl apply -f ui-deployment.yml
+  kubectl apply -f post-deployment.yml
+  kubectl apply -f comment-deployment.yml
+  kubectl apply -f mongo-deployment.yml
+  ```
+  - Проваерка статуса депроя микросервисов
+  ```
+  kubectl get deployment
+  ```
+  - Просмотр pods с использованием `selector`
+  ```
+  kubectl get pods --selector component=ui
+  ```
+  - Проблос порта на локальную машину.
+  ```
+  kubectl port-forward <pod-name> 8080:9292
+  ```
+  - Просмотр `Services`.
+  ```
+  kubectl describe service comment
+  ```
+  - Запуск комманд в нутри pods
+  ```
+  kubectl exec -ti <pod-name> nslookup comment
+  ```
+  - Просмотр событий внутри pod
+  ```
+  kubectl logs <pod-name>
+  ``` 
+  - Удаление сервисов.
+  ```
+  kubectl delete -f mongodb-service.yml
+  kubectl delete service mongodb
+  ```
+  - Запуск микросервиса `UI` в веб браузере.
+  ```
+  minikube service ui
+  ```
+  - Просмотр всех сервисов.
+  ```
+  minikube services list
+  ```
+  - Просмотр всех расширений `Minicube`
+  ```
+  minikube addons list
+  ```
+  - Просмотр всех объектов в namespase `kube-sysytem`
+  ```
+  kubectl get all -n kube-system --selector k8s-app=kubernetes-dashboard
+  ```
+  - Запуск dashboard.
+  ```
+  minikube service kubernetes-dashboard -n kube-system
+  ```
+  - Деплой всех манифест файлов.
+  ```
+  kubectl apply -f ./kubernetes/reddit
+  ```
+  - Запуск `Puma` в `namespace` dev
+  ```
+  kubectl apply -n dev -f
+  minikube service ui -n dev
+  ```
+---
