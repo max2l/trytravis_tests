@@ -22,3 +22,8 @@ spec:
       containers:
       - image: max2l/ui
         name: ui
+        env:
+        - name: ENV
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
