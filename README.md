@@ -686,7 +686,12 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
     - Настроен отдельный `Namespace` для запуска в нем микросервисов.
     - Добавлена информация о `Namespace` в `UI`
   - Развернут `Kubernetes` в GKE.
+    - Создан кластер в GCP с использованием web консоли.
+    - Настроено подключение minikube к кластеру `Kubernetes`.
+    - Настроены правила фаервола для подключению к приложению `Puma` из внешней сети.
   - Запущен reddit в `Kubernetes`.
+  - Произведен запуск `Dashboard`и анализ работы кластера.
+  - Настроен запуск кластера GCP c использованием `terraform`
 
 ### Как запустить проект:
   - Запуск микросервисов в кластере.
@@ -753,5 +758,15 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
   ```
   kubectl apply -n dev -f
   minikube service ui -n dev
+  ```
+  - Определение внешнего IP и порта для соеденения с кластера.
+  ```
+  kubectl get nodes -o wide
+  kubectl describe service ui|grep NodePort
+  ```
+  - Запуск кластера `Kubernetes` с использованием `terraform`.
+  ```
+  cd kubernetes/terraform/
+  terraform apply
   ```
 ---
