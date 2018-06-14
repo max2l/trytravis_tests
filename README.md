@@ -76,6 +76,7 @@ docker system df
  - Создан шаблон для packer
  - Создана конфигурация для поднятия нескольких инстансев
  - Созданы плейбуки с использованием динамических инвентори для установки докера и запуска там нескольких приложений.
+ - Манивес для деплоя dashboard находится в файле `kubernetes/reddit/kubernetes-dashboard.yaml`. Он взят по ссылке https://docs.giantswarm.io/guides/install-kubernetes-dashboard/#deploying-dashboard 
 
 ### Как запустить проект:
  - Проверка статуса Docker машин
