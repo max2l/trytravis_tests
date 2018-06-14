@@ -680,10 +680,10 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
     - Изучена конфигурация `kubectl`.
     - Созданы Deployment ресурсы для микросервисов приложения `Puma`.
     - Все микросервисы запушены в `Kubernetes` кластере.
-    - Настроена взаимосвязь с использованием `Services` между микросарвисами приложения.
+    - Настроена взаимосвязь с использованием `Services` между микросервисами приложения.
     - Настроены переменные окружения для взаимодействия контейнеров с контейнером базы `mongodb`.
     - Настроено взаимодействие с микросервисом `ui` из внешней сети.
-    - Произведен анализ работы кластера испорльзуя `dashboard`
+    - Произведен анализ работы кластера используя `dashboard`
     - Настроен отдельный `Namespace` для запуска в нем микросервисов.
     - Добавлена информация о `Namespace` в `UI`
   - Развернут `Kubernetes` в GKE.
@@ -702,7 +702,7 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
   kubectl apply -f comment-deployment.yml
   kubectl apply -f mongo-deployment.yml
   ```
-  - Проваерка статуса депроя микросервисов
+  - Проверка статуса депроя микросервисов
   ```
   kubectl get deployment
   ```
@@ -718,7 +718,7 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
   ```
   kubectl describe service comment
   ```
-  - Запуск комманд в нутри pods
+  - Запуск команд внутри pods.
   ```
   kubectl exec -ti <pod-name> nslookup comment
   ```
@@ -760,7 +760,7 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
   kubectl apply -n dev -f
   minikube service ui -n dev
   ```
-  - Определение внешнего IP и порта для соеденения с кластера.
+  - Определение внешнего IP и порта для соединения с кластером.
   ```
   kubectl get nodes -o wide
   kubectl describe service ui|grep NodePort
