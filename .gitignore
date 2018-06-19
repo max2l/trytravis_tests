@@ -10,3 +10,4 @@ terraform/files/deploy.sh
 *.backup
 .terraform
 variables.tf
+/the_hard_way/

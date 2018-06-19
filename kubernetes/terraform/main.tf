@@ -1,7 +1,7 @@
 resource "google_container_cluster" "puma" {
   name               = "puma-kubernates"
   zone               = "us-central1-a"
-  initial_node_count = 1
+  initial_node_count = 3
   project = "${var.gcp_project}"
  
  
