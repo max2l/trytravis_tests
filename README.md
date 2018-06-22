@@ -771,3 +771,90 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
   terraform apply
   ```
 ---
+## Homework 23. Kubernetes. Network. Storage.
+### В процессе сделано:
+  - Изучено назначение и принцип работы компонентов `kube-dns`, `kubenet` и `kube-proxy`
+  - Произведена настройка и проверка работы приложения `Puma` с использованием балансировщика GCP.
+  - Произведена настройка `LoadBalancer` с использованием контролера для балансировки `Ingress Controller`.
+  - Произведена терминация TLS трафика на балансировщике, для этого:
+    - Создан само подписанный сертификат.
+    - Сертификат загружен в кластер `Kubernetes`.
+    - Произведена проверка загруженного сертификата.
+    - Произведена настройка `Ingress` балансировщика для работы только с https трафиком.
+    - Созданный объект `Secret` описан в виде манифеста.
+  - Для проекта `docker-201806` в GCE включен `network-policy`.
+  - Произведена настройка политик ограничения сетевого трафика между микросервисами приложения `Puma`.
+  - Произведена настройка работы базы данных `MongoDB` с использованием различных видов томов `Volumes`.
+  - Изучены особенности различных типов томов и механизмов работы с дисковыми хранилищами `emptyDir`, `gcePersistentDisk`, `PersistentVolume`.
+  - Настроено динамическое выделение `Volumes` с использованием различных `StorageClass`.
+### Как запустить проект:
+  - После настройки работы приложения с использованием балансировщика `GCP` необходимо:
+    - Узнать внешний IP для доступа к балансировщику.
+      ```
+      kubectl get service  -n dev --selector component=ui
+      ```
+    - Приложение `Puma` должно быть доступно по url `http://external_lb_ip`.
+    - В web консоли GCP будет создано правило для балансировки.
+  - Просмотр работы `Ingress Controller`.
+    ```
+    kubectl get ingress -n dev
+    ```
+  -  Настройка терминации https трафика.
+      - Генерация сертификата
+        ```
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=external_ingress_ip"
+        ```
+      - Загрузка сертификата в кластер `Kubernetes`
+        ```
+        kubectl create secret tls ui-ingress --key tls.key --cert tls.crt -n dev
+        ```
+      -  Проверка загрузки сертификата.
+          ```
+          kubectl describe secret ui-ingress -n dev
+          ```
+      -  Применение настроек балансировщика описанных в манифест файле.
+          ```
+          kubectl delete ingress ui -n dev
+          kubectl apply -f ui-ingress.yml -n dev
+          ```
+  - Для проверки настройки терминации https можно использовать url https://external_lb_ip
+  - Включение `network-policy` для GKE
+   ```
+   gcloud beta container clusters update   --zone=us-central1-a --update-addons=NetworkPolicy=ENABLED
+   gcloud beta container clusters update  docker-201806 --zone=us-central1-a  --enable-network-policy
+   ```
+  - Применение политик `network-policy`
+    ```
+    kubectl apply -f mongo-network-policy.yml -n dev
+    ```
+  - Создание диска в GCP
+    ```
+    gcloud compute disks create --size=25GB --zone=us-central1-a reddit-mongo-disk
+    ```
+  - Монтирование  диска к POD-ам.
+    ```
+    kubectl apply -f mongo-deployment.yml -n dev
+    ```
+  - Добавление `PersistentVolume` в кластер.
+    ```
+    kubectl apply -f mongo-volume.yml -n dev
+    ```
+  - Добавление запроса `PersistentVolumeClaim` в кластер.
+    ```
+    kubectl apply -f mongo-claim.yml -n dev
+    ```
+  - Подключение `PersistentVolumeClaim` к нашим Pod-ам.
+    ```
+    kubectl apply -f mongo-deployment.yml -n dev
+    ```
+  - Добавление `StorageClass` в крастер.
+    ```
+    kubectl apply -f storage-fast.yml -n dev
+    kubectl apply -f mongo-claim-dynamic.yml -n dev
+    kubectl apply -f mongo-deployment.yml -n dev
+    ```
+  - Просмотр созданных `Persistent Volumes`.
+  ```
+  kubectl get persistentvolume -n dev
+  ```
+---
