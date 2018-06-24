@@ -858,3 +858,26 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
   kubectl get persistentvolume -n dev
   ```
 ---
+## Homework 25. Интеграция Kubernetes в GitlabCI.
+### В процессе сделано:
+  - Произведена установка клиенской и серверной части `Helm`.
+  - Подготовлена скруктура файлов для уствеовки `Chart`.
+### Как запустить проект:
+  - Запуск tiller-сервера
+    ```
+    kubectl apply -f tiller.yml
+    helm init --service-account tiller
+    ```
+  - Проверка установки серверной части `Helm`.
+    ```
+    kubectl get pods -n kube-system --selector app=helm
+    ```
+  - Усановка `Chart`.
+    ```
+    helm install --name test-ui-1 ui/
+    ```
+  - Проверка установки `Chart`.
+    ```
+    helm ls
+    ```
+---
