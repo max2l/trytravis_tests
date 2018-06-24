@@ -771,7 +771,7 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
   terraform apply
   ```
 ---
-## Homework 23. Kubernetes. Network. Storage.
+## Homework 24. Kubernetes. Network. Storage.
 ### В процессе сделано:
   - Изучено назначение и принцип работы компонентов `kube-dns`, `kubenet` и `kube-proxy`
   - Произведена настройка и проверка работы приложения `Puma` с использованием балансировщика GCP.
