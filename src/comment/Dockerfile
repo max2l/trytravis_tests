@@ -28,3 +28,4 @@ COPY --from=builder /usr/lib/ruby  /usr/lib/ruby
 COPY --from=builder /usr/bin/puma /usr/bin/puma
 
 CMD ["puma"]
+
