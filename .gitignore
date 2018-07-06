@@ -10,4 +10,6 @@ terraform/files/deploy.sh
 *.backup
 .terraform
 variables.tf
+requirements.lock
+*.tgz
 /the_hard_way/
