@@ -854,14 +854,27 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
     kubectl apply -f mongo-deployment.yml -n dev
     ```
   - Просмотр созданных `Persistent Volumes`.
-  ```
-  kubectl get persistentvolume -n dev
-  ```
+    ```
+    kubectl get persistentvolume -n dev
+    ```
 ---
 ## Homework 25. Интеграция Kubernetes в GitlabCI.
 ### В процессе сделано:
   - Произведена установка клиенской и серверной части `Helm`.
-  - Подготовлена скруктура файлов для уствеовки `Chart`.
+  - Подготовлена скруктура файлов для установки `Chart` для `UI` компонента.
+  - Произведена установка `Chart` для `UI` компонента.
+  - `Chart` для `UI` изменен для запуска нескольких ресурсов.
+  - Произведена шаблонизация сущьностей исмользуемых для компонента `UI`.
+  - Установлено несколько релизов `UI`.
+  - Произведена проверка работы запушеных `UI` релизов.
+  - Добавленны пользовательские переменные для `Chart` компонента `UI`.
+  - Настроены `Charts` для компонентов `POST` и `COMMENT`.
+  - Произведена интергация `Charts` с `MongoDB`.
+  - Созданы `helpers` и функции `templates` для всех `Charts`.
+  - Создан единый `Chart` `reddit` который объединит все ранее созданные компоненты.
+  - Добавлен `Chart` из общедоступного репозитория `stable/mongodb`.
+  - Определены переменные окружения для взаимодействия между компанентами.
+
 ### Как запустить проект:
   - Запуск tiller-сервера
     ```
@@ -879,5 +892,37 @@ gcloud compute firewall-rules create zipkin-default --allow tcp:9411
   - Проверка установки `Chart`.
     ```
     helm ls
+    ```
+  - Установка нескольких релизов `UI`.
+    ```
+    helm install ui --name ui-1
+    helm install ui --name ui-2
+    helm install ui --name ui-3
+    ```
+  - Проверка созданных ингрессов.
+    ```
+    kubectl get ingress
+    ```
+  - Обнавление установленных релизов.
+    ```
+    helm upgrade ui-1 ui/
+    helm upgrade ui-2 ui/
+    helm upgrade ui-3 ui/
+    ```
+  - Загрузить зависимости единого `Chart` `reddit`.
+    ```
+    helm dep update ./reddit
+    ```
+  - Поиск `Charts` в общедоступном репозитории.
+    ```
+    helm search mongo
+    ```
+  - Установка приложения с использованием общедоступного `Charts`
+    ```
+    helm install reddit --name reddit-test
+    ```
+  - Обнавление релиза.
+    ```
+    helm upgrade reddit-test ./reddit
     ```
 ---
