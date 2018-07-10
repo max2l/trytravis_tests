@@ -1,0 +1,35 @@
+---
+
+- name: run the playbook tasks on the localhost
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: test 
+      command: pwd
+    - name: Create infrastructure for GCP.
+      script: ../the_hard_way/scripts/1_create_gcp_infrastructure.sh
+
+    - name: Create certificates.
+      script: ../the_hard_way/scripts/2_create_ssl_certs.sh
+
+    - name: Create config files
+      script: ../the_hard_way/scripts/3_create_config_for_kuber.sh
+
+    - name: Copy all files to GCP virtual hosts
+      script: ../the_hard_way/scripts/4_copy_files_to_gcp.sh
+
+    - name: Install etcd and Kubernetes Control Plane to controller nodes
+      script: ../the_hard_way/scripts/5_install_etcd_KCP.sh
+    
+    - name: Install softwate to Kubernetes Worker Nodes
+      script: ../the_hard_way/scripts/6_setup_Kubernetes_Worker_Nodes.sh
+
+    - name: Configuring kubectl for Remote Access
+      script: ../the_hard_way/scripts/7_remote_access.sh
+
+    - name: Provisioning Pod Network Routes
+      script: ../the_hard_way/scripts/8_pod_network_routes.sh
+
+    - name: Deploying the DNS Cluster Add-on
+      script: ../the_hard_way/scripts/9_deploy_dns_cluster_addon.sh
+

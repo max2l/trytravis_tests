@@ -1,0 +1,44 @@
+#!/bin/sh -xe
+
+cd ../the_hard_way/
+
+for instance in controller-0 controller-1 controller-2; do
+  gcloud compute ssh ${instance} --command "sudo /tmp/setup_etcd.sh"
+done
+
+for instance in controller-0 controller-1 controller-2; do
+  gcloud compute ssh ${instance} --command "sudo /tmp/setup_KubernetesControlPlane.sh"
+done
+
+gcloud compute ssh controller-0  --command /tmp/createRBACforKubeletAuthorization.sh
+
+{
+  KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-hard-way \
+    --region $(gcloud config get-value compute/region) \
+    --format 'value(address)')
+
+  gcloud compute http-health-checks create kubernetes \
+    --description "Kubernetes Health Check" \
+    --host "kubernetes.default.svc.cluster.local" \
+    --request-path "/healthz"
+
+  gcloud compute firewall-rules create kubernetes-the-hard-way-allow-health-check \
+    --network kubernetes-the-hard-way \
+    --source-ranges 209.85.152.0/22,209.85.204.0/22,35.191.0.0/16 \
+    --allow tcp
+
+  gcloud compute target-pools create kubernetes-target-pool \
+    --http-health-check kubernetes
+
+  gcloud compute target-pools add-instances kubernetes-target-pool \
+   --instances controller-0,controller-1,controller-2
+
+  gcloud compute forwarding-rules create kubernetes-forwarding-rule \
+    --address ${KUBERNETES_PUBLIC_ADDRESS} \
+    --ports 6443 \
+    --region $(gcloud config get-value compute/region) \
+    --target-pool kubernetes-target-pool
+}
+
+cd -
+

@@ -599,3 +599,73 @@ docker-compose -f docker-compose-logging.yml up -d
 gcloud compute firewall-rules create zipkin-default --allow tcp:9411
 ```
 ---
+## Homework 22. Введение в Kubernetes.
+### В процессе сделано:
+  - Созданы манифест файлы для разворачивания микросервисов приложения `Puma`
+  - Развернут `Kubernates` кластер. Дле этого было сделано.
+    - Установлены `cfssl`, `cfssljson` и `kubectl`.
+    - В GCP создана сеть `kubernetes-the-hard-way ` и правила фаервола `kubernetes-the-hard-way-allow-internal` `kubernetes-the-hard-way-allow-external` для взаимодействия между элементами кластера в этой сети.
+    - Зарезервирован публичный IP адрес.
+    - Развернуты ноды для управления кластером `Kubernetes`.
+    - Развернуты `Workers` ноды.
+    - Созданы сертификаты необходимые для работы кластера. 
+    - Созданы конфигурационные файлы.
+    - Создан конфигурационный файл для формирования ключа шифрования.
+    - Развернут и запущен `etcd`  кластер.
+    - Настроено и  запущено  `Kubernetes Control Plane`.
+    - Настроен и  запущен  `Kubernetes API Server`.
+    - Настроен и  запущен `Kubernetes Controller Manager`.
+    - Настроен `Kubernetes Scheduler`.
+    - Активирован `HTTP Health Checks`.
+    - Настроена RBAC авторизация для Kubelet.
+    - Настроен и запушен `Frontend Load Balancer`.
+    - Настроены Worker ноды.
+    - Настроен `Kubelet` на Worker нодах.
+    - Настроен `Kubernetes Proxy` на Worker нодах.
+    - Настоен `kubectl` для удаленого доступа.
+    - Настроена `Pod Network` маршрутизация. 
+    - Установлен `DNS Cluster Add-on`.
+  - Установлены микросервисы приложения `Puma` на `Kubernetes` кластер.
+  - Созданы плейбуки для автоматизации процесса создания кластера `Kubernetes`.
+  
+### Как запустить проект:
+  - Запуск кластера `etcd`
+    ```
+    sudo systemctl daemon-reload
+    sudo systemctl enable etcd
+    sudo systemctl start etcd
+    ```
+  - Запуск  `Controller Services`
+    ```
+    sudo systemctl daemon-reload
+    sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
+    sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
+    ```
+  - Запуск `Frontend Load Balancer`.
+    ```
+    sudo systemctl restart nginx
+    sudo systemctl enable nginx
+    ```
+  - Запуск worker services
+    ```
+    sudo systemctl daemon-reload
+    sudo systemctl enable containerd kubelet kube-proxy
+    sudo systemctl start containerd kubelet kube-proxy
+    ```
+  - Просмотр таблицы маршрутизации для `Pod Network`
+    ```
+    gcloud compute routes list --filter "network: kubernetes-the-hard-way"
+    ```
+  - Установка микросервисов приложения `Puma` на кластер `Kubernates`. 
+    ```
+    kubectl apply -f kubernetes/reddit/mongo-deployment.yml
+    kubectl apply -f kubernetes/reddit/comment-deployment.yml
+    kubectl apply -f kubernetes/reddit/post-deployment.yml
+    kubectl apply -f kubernetes/reddit/ui-deployment.yml
+    ```
+  - Создание кластера `Kubernetes` с использованием ansible плейбуков
+    ```
+    ansible-playbook kubernetes/ansible/create_kubernates_gcp.yml
+    ansible-playbook kubernetes/ansible/remove_kubernates_gcp.yml 
+    ```
+---
